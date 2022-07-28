@@ -7,17 +7,29 @@ plugins {
     application
     kotlin("jvm") version "1.7.10"
     id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("org.flywaydb.flyway") version "9.0.2"
 }
 
 val entryPoint = "com.patrickpie12345.ApplicationKt"
-
 group = "com.patrickpie12345"
 version = "0.0.1"
+
 application {
     mainClass.set("com.patrickpie12345.ApplicationKt")
 
     val isDevelopment: Boolean = project.ext.has("development")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
+}
+
+kotlin {
+    tasks {
+        flyway {
+            url = "jdbc:postgresql://db:5432/financeTrackr"
+            user = "PG_USER"
+            password = "PG_PASSWORD"
+            schemas = arrayOf("public")
+        }
+    }
 }
 
 repositories {
