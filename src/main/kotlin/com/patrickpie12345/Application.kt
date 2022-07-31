@@ -9,5 +9,6 @@ fun main() {
         configureSerialization()
         configureMonitoring()
         configureRouting()
+        configureDependencyInjection()
     }.start(wait = true)
 }
