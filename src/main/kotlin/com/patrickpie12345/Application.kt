@@ -11,4 +11,7 @@ fun main() {
         configureRouting()
         configureDependencyInjection()
     }.start(wait = true)
+
+
+
 }

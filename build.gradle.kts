@@ -58,6 +58,7 @@ dependencies {
 
     // Vert.x SQL Client
     implementation("io.vertx:vertx-pg-client:$vertx_client_version")
+    implementation("io.vertx:vertx-lang-kotlin-coroutines:$vertx_client_version")
 
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")

@@ -1,5 +1,7 @@
 package com.patrickpie12345
 
+import com.patrickpie12345.storage.receipts.ReceiptStorage
+import com.patrickpie12345.storage.receipts.ReceiptStorageVertx
 import io.vertx.core.Vertx
 import io.vertx.pgclient.PgConnectOptions
 import io.vertx.pgclient.PgPool
@@ -27,5 +29,7 @@ object DI {
         }
 
         single<SqlClient> { get<PgPool>() }
+
+        single<ReceiptStorage> { ReceiptStorageVertx(get()) }
     }
 }

@@ -13,7 +13,7 @@ CREATE TYPE category AS ENUM ('GROCERY', 'HOUSEHOLD', 'RESTAURANT', 'MISCELLANEO
 CREATE TABLE public."receipt"(
     id              UUID                DEFAULT uuid_generate_v4()              NOT NULL,
     title           TEXT                                                        NOT NULL,
-    total           NUMERIC(5, 2)                                               NOT NULL,
+    price           NUMERIC(5, 2)                                               NOT NULL,
     category        category                                                    NOT NULL,
     image_url       TEXT                                                        NOT NULL,
     created_at      TIMESTAMP           DEFAULT timezone('utc'::TEXT, NOW())    NOT NULL,
