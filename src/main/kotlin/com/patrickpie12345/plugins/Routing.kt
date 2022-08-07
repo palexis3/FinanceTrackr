@@ -1,5 +1,6 @@
 package com.patrickpie12345.plugins
 
+import com.patrickpie12345.graphql.KtorServer
 import com.patrickpie12345.storage.receipts.ReceiptStorage
 import io.ktor.server.routing.*
 import io.ktor.http.*
@@ -14,8 +15,9 @@ fun Application.configureRouting() {
         get("/") {
             call.respondText("Hello World!")
         }
+
+        post("graphql") {
+            KtorServer().handle(this.call)
+        }
     }
-
-    val receiptStorage by getKoin().inject<ReceiptStorage>()
-
 }
