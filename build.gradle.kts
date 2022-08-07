@@ -4,6 +4,7 @@ val logback_version: String by project
 val postgresql_version: String by project
 val koin_version: String by project
 val vertx_client_version: String by project
+val graphql_version: String by project
 
 plugins {
     application
@@ -59,6 +60,9 @@ dependencies {
     // Vert.x SQL Client
     implementation("io.vertx:vertx-pg-client:$vertx_client_version")
     implementation("io.vertx:vertx-lang-kotlin-coroutines:$vertx_client_version")
+
+    // ExpediaGroup - GraphQL
+    implementation("com.expediagroup", "graphql-kotlin-spring-server", "$graphql_version")
 
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
