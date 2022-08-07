@@ -7,7 +7,6 @@ import com.patrickpie12345.storage.receipts.ReceiptStorage
 import java.util.UUID
 
 class ReceiptQuery(@GraphQLIgnore val receiptStorage: ReceiptStorage) {
-
     @GraphQLDescription("Get the receipt with the particular id")
     suspend fun getReceipt(id: String): Receipt? = receiptStorage.get(UUID.fromString(id))
 }

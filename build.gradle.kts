@@ -63,6 +63,8 @@ dependencies {
 
     // ExpediaGroup - GraphQL
     implementation("com.expediagroup", "graphql-kotlin-spring-server", "$graphql_version")
+    implementation("com.expediagroup", "graphql-kotlin-schema-generator", "$graphql_version")
+
 
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
