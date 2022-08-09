@@ -16,7 +16,7 @@ fun Application.configureRouting() {
             call.respondText("Hello World!")
         }
 
-        post("graphql") {
+        get("/graphql") {
             KtorServer().handle(this.call)
         }
     }
