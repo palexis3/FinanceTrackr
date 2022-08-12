@@ -12,11 +12,10 @@ import java.io.IOException
 class KtorGraphQLRequestParser(
     private val mapper: ObjectMapper
 ) : GraphQLRequestParser<ApplicationRequest> {
-
-    override suspend fun parseRequest(request: ApplicationRequest): GraphQLServerRequest = try {
+    override suspend fun parseRequest(request: ApplicationRequest): GraphQLServerRequest? = try {
         val newRequest = request.call.receiveText()
-        mapper.readValue(newRequest, GraphQLServerRequest:: class.java)
+        mapper.readValue(newRequest, GraphQLServerRequest::class.java)
     } catch (e: IOException) {
-        throw IOException("Unable to parse GraphQL payload.")
+        throw IOException("Unable to parse GraphQL payload with the exception: $e")
     }
 }

@@ -6,7 +6,6 @@ import graphql.schema.GraphQLType
 import java.time.Instant
 import java.util.*
 import kotlin.reflect.KType
-
 class CustomSchemaGeneratorHooks : SchemaGeneratorHooks {
 
     private val graphqlInstantType: GraphQLScalarType = GraphQLScalarType.newScalar()
