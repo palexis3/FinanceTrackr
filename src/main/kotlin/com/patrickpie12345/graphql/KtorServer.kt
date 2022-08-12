@@ -29,5 +29,4 @@ class KtorServer {
             applicationCall.response.call.respond(HttpStatusCode.BadRequest, "Invalid request")
         }
     }
-
 }

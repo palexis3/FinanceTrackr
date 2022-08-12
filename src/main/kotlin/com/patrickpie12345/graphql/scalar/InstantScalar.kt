@@ -11,7 +11,7 @@ object InstantScalar : Coercing<Instant, String> {
     private fun parseInstant(value: String): Instant {
         return try {
             Instant.parse(value)
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             throw CoercingSerializeException("Could not parse Date string: $e")
         }
     }

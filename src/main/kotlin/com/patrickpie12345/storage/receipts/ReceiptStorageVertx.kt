@@ -8,7 +8,7 @@ import io.vertx.sqlclient.SqlClient
 import io.vertx.sqlclient.Tuple
 import java.util.*
 
-class ReceiptStorageVertx(private val client: SqlClient): ReceiptStorage {
+class ReceiptStorageVertx(private val client: SqlClient) : ReceiptStorage {
 
     override suspend fun get(id: UUID): Receipt? =
         fetchRow(
@@ -16,7 +16,6 @@ class ReceiptStorageVertx(private val client: SqlClient): ReceiptStorage {
             query = "SELECT * from public.receipt where id = $1",
             args = Tuple.of(id)
         )?.toReceipt()
-
 
     override suspend fun create(newReceipt: ReceiptCreate): UpsertResult<Receipt> =
         fetchRow(
@@ -26,8 +25,10 @@ class ReceiptStorageVertx(private val client: SqlClient): ReceiptStorage {
                 ($1, $2, $3, $4, $5, $6)
                 RETURNING *
             """.trimIndent(),
-            args = Tuple.of(newReceipt.id, newReceipt.title, newReceipt.price,
-                newReceipt.category, newReceipt.imageUrl, newReceipt.createdAt)
+            args = Tuple.of(
+                newReceipt.id, newReceipt.title, newReceipt.price,
+                newReceipt.category, newReceipt.imageUrl, newReceipt.createdAt
+            )
         ).let { row ->
             when (row) {
                 null -> UpsertResult.NotOk("Failed to insert new receipt for ${newReceipt.title}")
