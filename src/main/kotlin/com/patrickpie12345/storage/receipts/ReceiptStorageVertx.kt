@@ -1,8 +1,9 @@
 package com.patrickpie12345.storage.receipts
 
+import com.patrickpie12345.graphql.models.Receipt
+import com.patrickpie12345.graphql.models.ReceiptCreate
 import com.patrickpie12345.storage.UpsertResult
 import com.patrickpie12345.storage.VertxStorageExtension.fetchRow
-import com.patrickpie12345.storage.receipts.ReceiptPostgresHelper.receiptReturn
 import io.vertx.sqlclient.SqlClient
 import io.vertx.sqlclient.Tuple
 import java.util.*
@@ -23,7 +24,7 @@ class ReceiptStorageVertx(private val client: SqlClient): ReceiptStorage {
             query = """
                 INSERT INTO public.receipt (id, title, price, category, image_url, created_at) VALUES
                 ($1, $2, $3, $4, $5, $6)
-                RETURNING $receiptReturn
+                RETURNING *
             """.trimIndent(),
             args = Tuple.of(newReceipt.id, newReceipt.title, newReceipt.price,
                 newReceipt.category, newReceipt.imageUrl, newReceipt.createdAt)

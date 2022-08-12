@@ -10,6 +10,7 @@ import io.ktor.server.request.*
 import org.koin.ktor.ext.getKoin
 
 fun Application.configureRouting() {
+    install(Routing)
 
     routing {
         get("/") {
@@ -19,5 +20,14 @@ fun Application.configureRouting() {
         post("graphql") {
             KtorServer().handle(this.call)
         }
+
+        get("playground") {
+            this.call.respondText(buildPlaygroundHtml("graphql", "subscriptions"), ContentType.Text.Html)
+        }
     }
 }
+private fun buildPlaygroundHtml(graphQLEndpoint: String, subscriptionEndpoint: String) =
+    Application::class.java.classLoader.getResource("graphql-playground.html")?.readText()
+        ?.replace("\${graphQLEndpoint}", graphQLEndpoint)
+        ?.replace("\${subscriptionEndpoint", subscriptionEndpoint)
+        ?: throw IllegalStateException("graphql-playground.html cannot be found in the classpath")

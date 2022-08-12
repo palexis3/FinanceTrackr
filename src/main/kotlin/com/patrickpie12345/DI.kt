@@ -13,10 +13,10 @@ object DI {
         single {
             PgConnectOptions().apply {
                 port = 5432
-                host = "db"
+                host = "localhost"
                 database = "financeTrackr"
-                user = "PG_USER"
-                password = "PG_PASSWORD"
+                user = "postgres"
+                password = "postgres"
             }
         }
 
