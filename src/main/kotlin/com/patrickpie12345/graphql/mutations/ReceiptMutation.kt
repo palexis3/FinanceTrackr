@@ -11,7 +11,7 @@ class ReceiptMutation(@GraphQLIgnore val receiptStorage: ReceiptStorage) {
 
     @GraphQLDescription("Add new receipt")
     suspend fun createReceipt(receipt: ReceiptCreate): Receipt = run {
-        when(val result = receiptStorage.create(receipt)) {
+        when (val result = receiptStorage.create(receipt)) {
             is UpsertResult.Ok -> result.result
             else -> throw Exception("Unable to create receipt ${receipt.id})")
         }

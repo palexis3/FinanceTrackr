@@ -15,7 +15,7 @@ data class Receipt(
     val price: Float,
     val category: Category? = null,
     val imageUrl: String?,
-    val createdAt: Instant?= null
+    val createdAt: Instant? = null
 )
 
 data class ReceiptCreate(

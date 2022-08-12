@@ -11,6 +11,7 @@ plugins {
     kotlin("jvm") version "1.7.10"
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("org.flywaydb.flyway") version "9.0.2"
+    id("org.jlleitschuh.gradle.ktlint") version "10.1.0"
 }
 
 val entryPoint = "com.patrickpie12345.ApplicationKt"
@@ -40,6 +41,8 @@ repositories {
 }
 
 dependencies {
+
+    // Ktor
     implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-auth-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-auth-jwt-jvm:$ktor_version")
@@ -48,6 +51,9 @@ dependencies {
     implementation("io.ktor:ktor-server-call-logging-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
+
+    // Kotlin
+    implementation("org.jetbrains.kotlin:kotlin-stdlib")
 
     // Postgres DB
     implementation("org.postgresql:postgresql:$postgresql_version")
@@ -65,7 +71,10 @@ dependencies {
     implementation("com.expediagroup", "graphql-kotlin-spring-server", "$graphql_version")
     implementation("com.expediagroup", "graphql-kotlin-schema-generator", "$graphql_version")
 
-
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+}
+
+configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
+    disabledRules.set(setOf("no-wildcard-imports"))
 }
