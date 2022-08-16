@@ -12,6 +12,7 @@ plugins {
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("org.flywaydb.flyway") version "9.0.2"
     id("org.jlleitschuh.gradle.ktlint") version "10.1.0"
+    id("com.expediagroup.graphql") version "6.1.0"
 }
 
 val entryPoint = "com.patrickpie12345.ApplicationKt"
@@ -28,9 +29,9 @@ application {
 kotlin {
     tasks {
         flyway {
-            url = "jdbc:postgresql://db:5432/financeTrackr"
-            user = "PG_USER"
-            password = "PG_PASSWORD"
+            url = "jdbc:postgresql://localhost:54333/financeTrackr"
+            user = "postgres"
+            password = "postgres"
             schemas = arrayOf("public")
         }
     }
@@ -41,15 +42,14 @@ repositories {
 }
 
 dependencies {
-
     // Ktor
-    implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-auth-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-auth-jwt-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktor_version")
-    implementation("io.ktor:ktor-serialization-jackson-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-call-logging-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
+    implementation("io.ktor:ktor-server-core:$ktor_version")
+    implementation("io.ktor:ktor-server-netty:$ktor_version")
+    implementation("io.ktor:ktor-server-auth:$ktor_version")
+    implementation("io.ktor:ktor-server-auth-jwt:$ktor_version")
+    implementation("io.ktor:ktor-server-content-negotiation:$ktor_version")
+    implementation("io.ktor:ktor-serialization-jackson:$ktor_version")
+    implementation("io.ktor:ktor-server-call-logging:$ktor_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
 
     // Kotlin
@@ -60,6 +60,7 @@ dependencies {
 
     // Koin for Ktor
     implementation("io.insert-koin:koin-ktor:$koin_version")
+
     // SLF4J Logger
     implementation("io.insert-koin:koin-logger-slf4j:$koin_version")
 
@@ -68,7 +69,7 @@ dependencies {
     implementation("io.vertx:vertx-lang-kotlin-coroutines:$vertx_client_version")
 
     // ExpediaGroup - GraphQL
-    implementation("com.expediagroup", "graphql-kotlin-spring-server", "$graphql_version")
+    implementation("com.expediagroup", "graphql-kotlin-server", "$graphql_version")
     implementation("com.expediagroup", "graphql-kotlin-schema-generator", "$graphql_version")
 
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
@@ -77,4 +78,10 @@ dependencies {
 
 configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
     disabledRules.set(setOf("no-wildcard-imports"))
+}
+
+graphql {
+    schema {
+        packages = listOf("com.patrickpie12345.graphql")
+    }
 }
