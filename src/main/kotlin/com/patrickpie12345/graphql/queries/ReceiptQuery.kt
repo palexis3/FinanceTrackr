@@ -10,8 +10,8 @@ import java.util.UUID
 
 class ReceiptQuery : Query {
 
-    @GraphQLIgnore
     private val receiptStorage by getKoin().inject<ReceiptStorage>()
+
     @GraphQLDescription("Get the receipt with the particular id")
     suspend fun getReceipt(id: String): Receipt? = receiptStorage.get(UUID.fromString(id))
 }

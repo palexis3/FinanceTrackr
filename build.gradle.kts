@@ -71,6 +71,10 @@ dependencies {
     // ExpediaGroup - GraphQL
     implementation("com.expediagroup", "graphql-kotlin-server", "$graphql_version")
     implementation("com.expediagroup", "graphql-kotlin-schema-generator", "$graphql_version")
+    implementation("com.expediagroup", "graphql-kotlin-hooks-provider", "$graphql_version")
+
+    // GraphQL SDL (Schema Definition Language) generation
+    graphqlSDL("com.expediagroup:graphql-kotlin-federated-hooks-provider:$graphql_version")
 
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")

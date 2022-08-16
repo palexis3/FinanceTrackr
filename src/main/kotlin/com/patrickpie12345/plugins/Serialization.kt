@@ -8,9 +8,10 @@ import io.ktor.server.plugins.contentnegotiation.*
 fun Application.configureSerialization() {
 
     install(ContentNegotiation) {
-        jackson {
-            configure(SerializationFeature.INDENT_OUTPUT, true)
+        register(ContentType.Application.Json, JacksonConverter())
+//        jackson {
+//            configure(SerializationFeature.INDENT_OUTPUT, true)
 //            register(ContentType.Application.Json, JacksonConverter())
-        }
+//        }
     }
 }

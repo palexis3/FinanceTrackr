@@ -5,7 +5,7 @@ import com.expediagroup.graphql.generator.TopLevelObject
 import com.expediagroup.graphql.generator.toSchema
 import com.patrickpie12345.graphql.mutations.ReceiptMutation
 import com.patrickpie12345.graphql.queries.ReceiptQuery
-import com.patrickpie12345.graphql.scalar.CustomSchemaGeneratorHooks
+import com.patrickpie12345.graphql.hooks.ScalarSchemaGeneratorHooks
 import graphql.GraphQL
 
 /**
@@ -14,7 +14,7 @@ import graphql.GraphQL
  */
 private val config = SchemaGeneratorConfig(
     supportedPackages = listOf("com.patrickpie12345.graphql"),
-    hooks = CustomSchemaGeneratorHooks()
+    hooks = ScalarSchemaGeneratorHooks()
 )
 
 private val queries = listOf(
@@ -25,4 +25,5 @@ private val mutations = listOf(
 )
 
 private val graphQLSchema = toSchema(config, queries, mutations)
+
 fun getGraphQLObject(): GraphQL = GraphQL.newGraphQL(graphQLSchema).build()
