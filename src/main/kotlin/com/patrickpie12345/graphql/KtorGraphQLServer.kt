@@ -1,6 +1,5 @@
 package com.patrickpie12345.graphql
 
-import com.expediagroup.graphql.dataloader.KotlinDataLoaderRegistryFactory
 import com.expediagroup.graphql.server.execution.GraphQLRequestHandler
 import com.expediagroup.graphql.server.execution.GraphQLServer
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -17,11 +16,10 @@ class KtorGraphQLServer(
 ) : GraphQLServer<ApplicationRequest>(requestParser, contextFactory, requestHandler)
 
 fun getGraphQLServer(mapper: ObjectMapper): KtorGraphQLServer {
-    val dataLoaderRegistryFactory = KotlinDataLoaderRegistryFactory()
     val contextFactory = KtorGraphQLContextFactory()
     val requestParser = KtorGraphQLRequestParser(mapper)
     val graphQL = getGraphQLObject()
-    val requestHandler = GraphQLRequestHandler(graphQL, dataLoaderRegistryFactory)
+    val requestHandler = GraphQLRequestHandler(graphQL)
 
     return KtorGraphQLServer(requestParser, contextFactory, requestHandler)
 }
