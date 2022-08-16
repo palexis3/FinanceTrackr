@@ -1,12 +1,15 @@
-package com.patrickpie12345.graphql.scalar
+package com.patrickpie12345.graphql.hooks
 
 import com.expediagroup.graphql.generator.hooks.SchemaGeneratorHooks
+import com.patrickpie12345.graphql.hooks.scalar.InstantScalar
+import com.patrickpie12345.graphql.hooks.scalar.UUIDScalar
 import graphql.schema.GraphQLScalarType
 import graphql.schema.GraphQLType
 import java.time.Instant
 import java.util.*
 import kotlin.reflect.KType
-class CustomSchemaGeneratorHooks : SchemaGeneratorHooks {
+
+class ScalarSchemaGeneratorHooks : SchemaGeneratorHooks {
 
     private val graphqlInstantType: GraphQLScalarType = GraphQLScalarType.newScalar()
         .name("Instant")
