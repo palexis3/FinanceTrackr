@@ -8,7 +8,9 @@ import io.vertx.pgclient.PgPool
 import io.vertx.sqlclient.PoolOptions
 import io.vertx.sqlclient.SqlClient
 import org.koin.dsl.module
+
 object DI {
+
     fun storageModule() = module {
         single {
             PgConnectOptions().apply {

@@ -1,4 +1,4 @@
-package com.patrickpie12345.graphql.scalar
+package com.patrickpie12345.graphql.hooks.scalar
 
 import graphql.language.StringValue
 import graphql.schema.Coercing

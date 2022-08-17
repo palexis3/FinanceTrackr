@@ -7,10 +7,11 @@ import io.vertx.sqlclient.Row
 import java.util.UUID
 
 fun Row.toReceipt() = Receipt(
-    id = getUUID("id"),
-    title = getString("title"),
-    price = getFloat("price"),
-    imageUrl = getString("image_url")
+    id = this.getUUID("id"),
+    title = this.getString("title"),
+    price = this.getFloat("price"),
+    imageUrl = this.getString("image_url"),
+    createdAt = this.getOffsetDateTime("created_at").toInstant()
 )
 
 interface ReceiptStorage {

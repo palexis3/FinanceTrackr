@@ -1,7 +1,6 @@
 package com.patrickpie12345.graphql.models
 
 import com.expediagroup.graphql.generator.annotations.GraphQLDescription
-import com.expediagroup.graphql.generator.annotations.GraphQLIgnore
 import java.time.Instant
 import java.util.*
 
@@ -15,14 +14,11 @@ data class Receipt(
     val price: Float,
     val category: Category? = null,
     val imageUrl: String?,
-    val createdAt: Instant? = null
+    val createdAt: Instant
 )
-
 data class ReceiptCreate(
-    @GraphQLIgnore val id: UUID = UUID.randomUUID(),
     val title: String,
     val price: Float,
     val category: Category?,
-    val imageUrl: String?,
-    val createdAt: Instant
+    val imageUrl: String?
 )

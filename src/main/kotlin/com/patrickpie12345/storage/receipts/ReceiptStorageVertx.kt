@@ -21,13 +21,12 @@ class ReceiptStorageVertx(private val client: SqlClient) : ReceiptStorage {
         fetchRow(
             client = client,
             query = """
-                INSERT INTO public.receipt (id, title, price, category, image_url, created_at) VALUES
-                ($1, $2, $3, $4, $5, $6)
-                RETURNING *
+                INSERT INTO public.receipt (title, price, category, image_url) VALUES
+                ($1, $2, $3, $4) RETURNING *
             """.trimIndent(),
             args = Tuple.of(
-                newReceipt.id, newReceipt.title, newReceipt.price,
-                newReceipt.category, newReceipt.imageUrl, newReceipt.createdAt
+                newReceipt.title, newReceipt.price,
+                newReceipt.category, newReceipt.imageUrl
             )
         ).let { row ->
             when (row) {

@@ -12,7 +12,9 @@ import java.io.IOException
 class KtorGraphQLRequestParser(
     private val mapper: ObjectMapper
 ) : GraphQLRequestParser<ApplicationRequest> {
-    override suspend fun parseRequest(request: ApplicationRequest): GraphQLServerRequest? = try {
+
+    @Suppress("BlockingMethodInNonBlockingContext")
+    override suspend fun parseRequest(request: ApplicationRequest): GraphQLServerRequest = try {
         val newRequest = request.call.receiveText()
         mapper.readValue(newRequest, GraphQLServerRequest::class.java)
     } catch (e: IOException) {

@@ -1,12 +1,16 @@
-package com.patrickpie12345.graphql.scalar
+package com.patrickpie12345.graphql.hooks
 
 import com.expediagroup.graphql.generator.hooks.SchemaGeneratorHooks
+import com.patrickpie12345.graphql.hooks.scalar.InstantScalar
+import com.patrickpie12345.graphql.hooks.scalar.UUIDScalar
 import graphql.schema.GraphQLScalarType
 import graphql.schema.GraphQLType
 import java.time.Instant
-import java.util.*
+import java.util.UUID
+import kotlin.reflect.KClass
 import kotlin.reflect.KType
-class CustomSchemaGeneratorHooks : SchemaGeneratorHooks {
+
+class ScalarSchemaGeneratorHooks : SchemaGeneratorHooks {
 
     private val graphqlInstantType: GraphQLScalarType = GraphQLScalarType.newScalar()
         .name("Instant")
@@ -20,7 +24,7 @@ class CustomSchemaGeneratorHooks : SchemaGeneratorHooks {
         .coercing(UUIDScalar)
         .build()
 
-    override fun willGenerateGraphQLType(type: KType): GraphQLType? = when (type.classifier) {
+    override fun willGenerateGraphQLType(type: KType): GraphQLType? = when (type.classifier as? KClass<*>) {
         Instant::class -> graphqlInstantType
         UUID::class -> graphqlUUIDType
         else -> super.willGenerateGraphQLType(type)
