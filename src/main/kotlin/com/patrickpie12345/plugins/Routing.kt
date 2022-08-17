@@ -1,6 +1,7 @@
 package com.patrickpie12345.plugins
 
 import com.patrickpie12345.graphql.KtorServer
+import com.patrickpie12345.routing.receiptRouting
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -22,6 +23,9 @@ fun Application.configureRouting() {
         get("playground") {
             this.call.respondText(buildPlaygroundHtml("graphql", "subscriptions"), ContentType.Text.Html)
         }
+
+        // HTTP APIs
+        receiptRouting()
     }
 }
 private fun buildPlaygroundHtml(graphQLEndpoint: String, subscriptionEndpoint: String) =
