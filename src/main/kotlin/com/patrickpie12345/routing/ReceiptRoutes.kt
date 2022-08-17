@@ -6,6 +6,7 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.java.KoinJavaComponent
+import java.util.*
 
 fun Route.receiptRouting() {
 
@@ -20,7 +21,19 @@ fun Route.receiptRouting() {
                 call.respondText("No receipts found", status = HttpStatusCode.OK)
             }
         }
-        get("{id?}") {}
-        post {}
+        get("{id?}") {
+            val id = call.parameters["id"] ?: return@get call.respondText(
+                "Missing id",
+                status = HttpStatusCode.BadRequest
+            )
+            val receipt = receiptStorage.get(UUID.fromString(id)) ?: return@get call.respondText(
+                "No receipt with the id $id",
+                status = HttpStatusCode.NotFound
+            )
+            call.respond(receipt)
+        }
+        post {
+
+        }
     }
 }
