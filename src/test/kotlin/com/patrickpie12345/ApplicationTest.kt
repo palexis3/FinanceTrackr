@@ -8,6 +8,10 @@ import io.ktor.server.testing.*
 import kotlin.test.*
 
 class ApplicationTest {
+
+    /**
+     * TODO: Patrick fix up testing infra (koin exception is current occurring for storage injection)
+     */
 //    @Test
 //    fun testRoot() = testApplication {
 //        application {

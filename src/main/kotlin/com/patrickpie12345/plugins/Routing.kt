@@ -13,15 +13,20 @@ fun Application.configureRouting() {
             call.respondText("Hello World!")
         }
 
+        // HTTP APIs
         receiptRouting()
 
-//        post("graphql") {
-//            KtorServer().handle(this.call)
-//        }
-//
-//        get("playground") {
-//            this.call.respondText(buildPlaygroundHtml("graphql", "subscriptions"), ContentType.Text.Html)
-//        }
+        /**
+         *  TODO: Patrick get back to implementing GraphQL Routing
+         *
+         *  post("graphql") {
+         *      post("graphql") {
+         *  }
+         *
+         *  get("playground") {
+         *     this.call.respondText(buildPlaygroundHtml("graphql", "subscriptions"), ContentType.Text.Html)
+         *  }
+         */
     }
 }
 private fun buildPlaygroundHtml(graphQLEndpoint: String, subscriptionEndpoint: String) =

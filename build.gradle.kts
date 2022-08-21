@@ -6,6 +6,7 @@ val koin_version: String by project
 val vertx_client_version: String by project
 val graphql_version: String by project
 val jackson_version: String by project
+val scram_version: String by project
 
 plugins {
     application
@@ -100,8 +101,8 @@ dependencies {
     // Jackson serialization
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jackson_version")
 
-    implementation("com.ongres.scram:client:2.1")
-    implementation("com.ongres.scram:common:2.1")
+    implementation("com.ongres.scram:client:$scram_version")
+    implementation("com.ongres.scram:common:$scram_version")
 
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
