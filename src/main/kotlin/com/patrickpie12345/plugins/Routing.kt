@@ -1,10 +1,7 @@
 package com.patrickpie12345.plugins
 
-import com.patrickpie12345.graphql.KtorServer
 import com.patrickpie12345.routing.receiptRouting
-import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
@@ -16,16 +13,15 @@ fun Application.configureRouting() {
             call.respondText("Hello World!")
         }
 
-        post("graphql") {
-            KtorServer().handle(this.call)
-        }
-
-        get("playground") {
-            this.call.respondText(buildPlaygroundHtml("graphql", "subscriptions"), ContentType.Text.Html)
-        }
-
-        // HTTP APIs
         receiptRouting()
+
+//        post("graphql") {
+//            KtorServer().handle(this.call)
+//        }
+//
+//        get("playground") {
+//            this.call.respondText(buildPlaygroundHtml("graphql", "subscriptions"), ContentType.Text.Html)
+//        }
     }
 }
 private fun buildPlaygroundHtml(graphQLEndpoint: String, subscriptionEndpoint: String) =

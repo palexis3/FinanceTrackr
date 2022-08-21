@@ -30,7 +30,7 @@ application {
 kotlin {
     tasks {
         flyway {
-            url = "jdbc:postgresql://localhost:54333/financeTrackr"
+            url = "jdbc:postgresql://localhost:5432/financeTrackr"
             user = "postgres"
             password = "postgres"
             schemas = arrayOf("public")
@@ -89,9 +89,9 @@ dependencies {
 
     // ExpediaGroup - GraphQL
     implementation("com.expediagroup:graphql-kotlin-server:$graphql_version")
-    compileOnly("com.expediagroup:graphql-kotlin-gradle-plugin:$graphql_version")
-    compileOnly("com.expediagroup:graphql-kotlin-hooks-provider:$graphql_version")
-    compileOnly("com.expediagroup:graphql-kotlin-sdl-generator:$graphql_version")
+    implementation("com.expediagroup:graphql-kotlin-gradle-plugin:$graphql_version")
+    implementation("com.expediagroup:graphql-kotlin-hooks-provider:$graphql_version")
+    implementation("com.expediagroup:graphql-kotlin-sdl-generator:$graphql_version")
     implementation("com.expediagroup:graphql-kotlin-schema-generator:$graphql_version")
 
     // GraphQL SDL (Schema Definition Language) generation
@@ -99,6 +99,9 @@ dependencies {
 
     // Jackson serialization
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jackson_version")
+
+    implementation("com.ongres.scram:client:2.1")
+    implementation("com.ongres.scram:common:2.1")
 
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")

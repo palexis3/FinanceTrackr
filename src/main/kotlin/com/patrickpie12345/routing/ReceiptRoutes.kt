@@ -1,8 +1,10 @@
 package com.patrickpie12345.routing
 
+import com.patrickpie12345.graphql.models.ReceiptCreate
 import com.patrickpie12345.storage.receipts.ReceiptStorage
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.java.KoinJavaComponent
@@ -33,7 +35,10 @@ fun Route.receiptRouting() {
             call.respond(receipt)
         }
         post {
-
+            val receipt = call.receive<ReceiptCreate>()
+            receiptStorage.create(receipt)
+            call.application.environment.log.debug("$receipt")
+            call.respondText("Receipt stored correctly", status = HttpStatusCode.Created)
         }
     }
 }
