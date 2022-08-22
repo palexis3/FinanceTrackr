@@ -9,7 +9,6 @@ import io.ktor.server.plugins.contentnegotiation.*
 import java.text.DateFormat
 
 fun Application.configureSerialization() {
-
     install(ContentNegotiation) {
         jackson {
             configure(SerializationFeature.INDENT_OUTPUT, true)
