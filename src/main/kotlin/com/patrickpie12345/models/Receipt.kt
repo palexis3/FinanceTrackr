@@ -1,4 +1,4 @@
-package com.patrickpie12345.graphql.models
+package com.patrickpie12345.models
 
 import com.expediagroup.graphql.generator.annotations.GraphQLDescription
 import java.time.Instant
@@ -12,8 +12,8 @@ data class Receipt(
     val id: UUID,
     val title: String,
     val price: Float,
-    val category: Category? = null,
-    val imageUrl: String?,
+    val category: Category,
+    val imageUrl: String? = null,
     val createdAt: Instant
 )
 data class ReceiptCreate(

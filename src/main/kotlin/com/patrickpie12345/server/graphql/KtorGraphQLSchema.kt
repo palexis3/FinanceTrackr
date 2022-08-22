@@ -1,11 +1,11 @@
-package com.patrickpie12345.graphql
+package com.patrickpie12345.server.graphql
 
 import com.expediagroup.graphql.generator.SchemaGeneratorConfig
 import com.expediagroup.graphql.generator.TopLevelObject
 import com.expediagroup.graphql.generator.toSchema
-import com.patrickpie12345.graphql.hooks.ScalarSchemaGeneratorHooks
-import com.patrickpie12345.graphql.mutations.ReceiptMutation
-import com.patrickpie12345.graphql.queries.ReceiptQuery
+import com.patrickpie12345.server.graphql.hooks.ScalarSchemaGeneratorHooks
+import com.patrickpie12345.server.graphql.mutations.ReceiptMutation
+import com.patrickpie12345.server.graphql.queries.ReceiptQuery
 import graphql.GraphQL
 
 /**

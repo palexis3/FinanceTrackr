@@ -1,6 +1,6 @@
 package com.patrickpie12345.plugins
 
-import com.patrickpie12345.routing.receiptRouting
+import com.patrickpie12345.server.api.routing.receiptRouting
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -20,7 +20,7 @@ fun Application.configureRouting() {
          *  TODO: Patrick get back to implementing GraphQL Routing
          *
          *  post("graphql") {
-         *      post("graphql") {
+         *      KtorServer().handle(this.call)
          *  }
          *
          *  get("playground") {

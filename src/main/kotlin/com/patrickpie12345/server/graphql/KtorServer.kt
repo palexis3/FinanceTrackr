@@ -1,4 +1,4 @@
-package com.patrickpie12345.graphql
+package com.patrickpie12345.server.graphql
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.ktor.http.*

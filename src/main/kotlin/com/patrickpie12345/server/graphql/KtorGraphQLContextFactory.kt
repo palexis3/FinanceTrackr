@@ -1,4 +1,4 @@
-package com.patrickpie12345.graphql
+package com.patrickpie12345.server.graphql
 
 import com.expediagroup.graphql.generator.execution.GraphQLContext
 import com.expediagroup.graphql.server.execution.GraphQLContextFactory
