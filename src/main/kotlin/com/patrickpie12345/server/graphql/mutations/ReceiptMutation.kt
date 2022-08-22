@@ -1,9 +1,9 @@
-package com.patrickpie12345.graphql.mutations
+package com.patrickpie12345.server.graphql.mutations
 
 import com.expediagroup.graphql.generator.annotations.GraphQLDescription
 import com.expediagroup.graphql.server.operations.Mutation
-import com.patrickpie12345.graphql.models.Receipt
-import com.patrickpie12345.graphql.models.ReceiptCreate
+import com.patrickpie12345.models.Receipt
+import com.patrickpie12345.models.ReceiptCreate
 import com.patrickpie12345.storage.UpsertResult
 import com.patrickpie12345.storage.receipts.ReceiptStorage
 import org.koin.java.KoinJavaComponent.getKoin

@@ -1,4 +1,4 @@
-package com.patrickpie12345.graphql
+package com.patrickpie12345.server.graphql
 
 import com.expediagroup.graphql.server.execution.GraphQLRequestParser
 import com.expediagroup.graphql.server.types.GraphQLServerRequest

@@ -1,8 +1,8 @@
-package com.patrickpie12345.graphql.hooks
+package com.patrickpie12345.server.graphql.hooks
 
 import com.expediagroup.graphql.generator.hooks.SchemaGeneratorHooks
-import com.patrickpie12345.graphql.hooks.scalar.InstantScalar
-import com.patrickpie12345.graphql.hooks.scalar.UUIDScalar
+import com.patrickpie12345.server.graphql.hooks.scalar.InstantScalar
+import com.patrickpie12345.server.graphql.hooks.scalar.UUIDScalar
 import graphql.schema.GraphQLScalarType
 import graphql.schema.GraphQLType
 import java.time.Instant

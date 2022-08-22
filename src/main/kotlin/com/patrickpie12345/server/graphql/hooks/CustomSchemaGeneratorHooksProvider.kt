@@ -1,4 +1,4 @@
-package com.patrickpie12345.graphql.hooks
+package com.patrickpie12345.server.graphql.hooks
 
 import com.expediagroup.graphql.generator.hooks.SchemaGeneratorHooks
 import com.expediagroup.graphql.plugin.schema.hooks.SchemaGeneratorHooksProvider
