@@ -1,9 +1,9 @@
 package com.patrickpie12345.storage.receipts
 
+import com.patrickpie12345.models.Category
 import com.patrickpie12345.models.Page
-import com.patrickpie12345.server.graphql.models.Category
-import com.patrickpie12345.server.graphql.models.Receipt
-import com.patrickpie12345.server.graphql.models.ReceiptCreate
+import com.patrickpie12345.models.Receipt
+import com.patrickpie12345.models.ReceiptCreate
 import com.patrickpie12345.storage.UpsertResult
 import io.vertx.sqlclient.Row
 import java.time.ZoneOffset

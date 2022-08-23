@@ -16,6 +16,7 @@ data class Receipt(
     val imageUrl: String? = null,
     val createdAt: Instant
 )
+
 data class ReceiptCreate(
     val title: String,
     val price: Float,
