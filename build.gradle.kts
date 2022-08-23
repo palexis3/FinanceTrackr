@@ -101,6 +101,7 @@ dependencies {
     // Jackson serialization
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jackson_version")
 
+    // SCRAM (Authentication needed for Postgres)
     implementation("com.ongres.scram:client:$scram_version")
     implementation("com.ongres.scram:common:$scram_version")
 
