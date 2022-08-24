@@ -5,7 +5,7 @@ import com.patrickpie12345.models.Receipt
 import com.patrickpie12345.models.ReceiptCreate
 import com.patrickpie12345.storage.UpsertResult
 import com.patrickpie12345.storage.receipts.ReceiptStorage
-import java.util.*
+import java.util.UUID
 
 class ReceiptService(private val receiptStorage: ReceiptStorage) {
 

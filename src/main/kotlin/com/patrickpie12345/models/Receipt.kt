@@ -20,6 +20,5 @@ data class Receipt(
 data class ReceiptCreate(
     val title: String,
     val price: Float,
-    val category: Category?,
-    val imageUrl: String?
+    val category: Category?
 )

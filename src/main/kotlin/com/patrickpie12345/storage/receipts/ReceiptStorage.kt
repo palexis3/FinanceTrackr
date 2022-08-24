@@ -22,4 +22,5 @@ interface ReceiptStorage {
     suspend fun get(id: UUID): Receipt?
     suspend fun getAll(): Page<Receipt>?
     suspend fun create(newReceipt: ReceiptCreate): UpsertResult<Receipt>
+    suspend fun addImage(receiptId: UUID, imageUrl: String): UpsertResult<String>
 }
