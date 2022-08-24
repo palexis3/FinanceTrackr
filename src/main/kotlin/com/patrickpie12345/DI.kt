@@ -37,7 +37,7 @@ object DI {
 
         single<ReceiptStorage> { ReceiptStorageVertx(get()) }
 
-        single<ReceiptService> { ReceiptService(get()) }
         single<FileStorageService> { AmazonFileStorageService() }
+        single { ReceiptService(get(), get()) }
     }
 }

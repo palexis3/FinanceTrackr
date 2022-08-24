@@ -57,7 +57,7 @@ class ReceiptStorageVertx(private val client: SqlClient) : ReceiptStorage {
             args = Tuple.of(receiptId, imageUrl)
         ).let { row ->
             when (row) {
-                null -> UpsertResult.NotOk("Failed to update receiptId: $receiptId with the following imageUrl: $imageUrl")
+                null -> UpsertResult.NotOk("Failed to update receiptId: $receiptId with image url")
                 else -> UpsertResult.Ok("Successfully updated receiptId: $receiptId with the following imageUrl: $imageUrl")
             }
         }
