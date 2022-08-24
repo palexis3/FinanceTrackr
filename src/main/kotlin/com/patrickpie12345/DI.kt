@@ -1,6 +1,8 @@
 package com.patrickpie12345
 
 import com.patrickpie12345.service.ReceiptService
+import com.patrickpie12345.service.aws.AmazonFileStorageService
+import com.patrickpie12345.service.aws.FileStorageService
 import com.patrickpie12345.storage.receipts.ReceiptStorage
 import com.patrickpie12345.storage.receipts.ReceiptStorageVertx
 import io.vertx.core.Vertx
@@ -36,5 +38,6 @@ object DI {
         single<ReceiptStorage> { ReceiptStorageVertx(get()) }
 
         single<ReceiptService> { ReceiptService(get()) }
+        single<FileStorageService> { AmazonFileStorageService() }
     }
 }
