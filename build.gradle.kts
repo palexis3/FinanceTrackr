@@ -7,6 +7,7 @@ val vertx_client_version: String by project
 val graphql_version: String by project
 val jackson_version: String by project
 val scram_version: String by project
+val aws_sdk_java_version: String by project
 
 plugins {
     application
@@ -104,6 +105,10 @@ dependencies {
     // SCRAM (Authentication needed for Postgres)
     implementation("com.ongres.scram:client:$scram_version")
     implementation("com.ongres.scram:common:$scram_version")
+
+    // AWS SDK - Java
+    implementation(platform("software.amazon.awssdk:bom:$aws_sdk_java_version"))
+    implementation("software.amazon.awssdk:s3")
 
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
