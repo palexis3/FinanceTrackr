@@ -2,6 +2,7 @@ package com.patrickpie12345.service.aws
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.slf4j.LoggerFactory
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
 import software.amazon.awssdk.core.sync.RequestBody
@@ -13,6 +14,8 @@ import java.io.File
 
 class AmazonFileStorageService : FileStorageService {
 
+    private val log = LoggerFactory.getLogger(this.javaClass)
+
     private var client: S3Client
 
     private val bucketName = System.getenv("AWS_BUCKET_NAME")
@@ -21,6 +24,11 @@ class AmazonFileStorageService : FileStorageService {
     private val secretAccessKey = System.getenv("AWS_SECRET_ACCESS_KEY")
 
     init {
+        log.debug("XXX-bucketName: $bucketName")
+        log.debug("XXX-region: $region")
+        log.debug("XXX-accessKeyId: $accessKeyId")
+        log.debug("XXX-secretAccessKey: $secretAccessKey")
+
         val credentials = AwsBasicCredentials.create(accessKeyId, secretAccessKey)
         val awsRegion = Region.of(region)
         client = S3Client.builder()

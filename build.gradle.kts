@@ -8,6 +8,7 @@ val graphql_version: String by project
 val jackson_version: String by project
 val scram_version: String by project
 val aws_sdk_java_version: String by project
+val dotenv_version: String by project
 
 plugins {
     application
@@ -109,6 +110,9 @@ dependencies {
     // AWS SDK - Java
     implementation(platform("software.amazon.awssdk:bom:$aws_sdk_java_version"))
     implementation("software.amazon.awssdk:s3")
+
+    // Dotenv (Loading environment variables)
+    implementation("io.github.cdimascio:dotenv-kotlin:$dotenv_version")
 
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
