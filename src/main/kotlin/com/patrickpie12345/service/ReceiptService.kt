@@ -1,8 +1,8 @@
 package com.patrickpie12345.service
 
 import com.patrickpie12345.models.Page
-import com.patrickpie12345.models.Receipt
-import com.patrickpie12345.models.ReceiptCreate
+import com.patrickpie12345.models.receipt.Receipt
+import com.patrickpie12345.models.receipt.ReceiptCreate
 import com.patrickpie12345.service.aws.FileStorageService
 import com.patrickpie12345.storage.UpsertResult
 import com.patrickpie12345.storage.receipts.ReceiptStorage

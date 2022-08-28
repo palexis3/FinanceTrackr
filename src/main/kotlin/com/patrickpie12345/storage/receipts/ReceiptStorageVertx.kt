@@ -1,8 +1,8 @@
 package com.patrickpie12345.storage.receipts
 
 import com.patrickpie12345.models.Page
-import com.patrickpie12345.models.Receipt
-import com.patrickpie12345.models.ReceiptCreate
+import com.patrickpie12345.models.receipt.Receipt
+import com.patrickpie12345.models.receipt.ReceiptCreate
 import com.patrickpie12345.storage.UpsertResult
 import com.patrickpie12345.storage.VertxStorageExtension.fetchRow
 import com.patrickpie12345.storage.VertxStorageExtension.fetchRowSet
@@ -41,7 +41,6 @@ class ReceiptStorageVertx(private val client: SqlClient) : ReceiptStorage {
                 newReceipt.title, newReceipt.price, newReceipt.category
             )
         ).let { row ->
-
             when (row) {
                 null -> UpsertResult.NotOk("Failed to insert new receipt for ${newReceipt.title}")
                 else -> UpsertResult.Ok(row.toReceipt())
@@ -52,7 +51,7 @@ class ReceiptStorageVertx(private val client: SqlClient) : ReceiptStorage {
         fetchRow(
             client = client,
             query = """
-                UPDATE public.receipt SET image_url = $2 WHERE id = $1 RETURNING *
+                UPDATE public.receipt SET image_url = $2 WHERE id = $1 RETURNING image_url
             """.trimIndent(),
             args = Tuple.of(receiptId, imageUrl)
         ).let { row ->

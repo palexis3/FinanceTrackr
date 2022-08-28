@@ -1,8 +1,8 @@
 package com.patrickpie12345.server.api.routing
 
 import com.patrickpie12345.extensions.toFile
-import com.patrickpie12345.models.Receipt
-import com.patrickpie12345.models.ReceiptCreate
+import com.patrickpie12345.models.receipt.Receipt
+import com.patrickpie12345.models.receipt.ReceiptCreate
 import com.patrickpie12345.service.ReceiptService
 import com.patrickpie12345.storage.UpsertResult
 import io.ktor.http.*

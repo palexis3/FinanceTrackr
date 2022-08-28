@@ -1,4 +1,4 @@
-package com.patrickpie12345.models
+package com.patrickpie12345.models.receipt
 
 import com.expediagroup.graphql.generator.annotations.GraphQLDescription
 import java.time.Instant
