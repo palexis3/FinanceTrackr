@@ -1,5 +1,6 @@
 package com.patrickpie12345.service.aws
 
+import com.patrickpie12345.Env
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
@@ -15,10 +16,10 @@ class AmazonFileStorageService : FileStorageService {
 
     private var client: S3Client
 
-    private val bucketName = System.getenv("AWS_BUCKET_NAME")
-    private val region = System.getenv("AWS_REGION")
-    private val accessKeyId = System.getenv("AWS_ACCESS_KEY_ID")
-    private val secretAccessKey = System.getenv("AWS_SECRET_ACCESS_KEY")
+    private val bucketName = Env.bucketName
+    private val region = Env.region
+    private val accessKeyId = Env.accessKeyId
+    private val secretAccessKey = Env.secretAccessKey
 
     init {
         val credentials = AwsBasicCredentials.create(accessKeyId, secretAccessKey)

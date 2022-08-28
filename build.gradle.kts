@@ -36,6 +36,7 @@ kotlin {
             user = "postgres"
             password = "postgres"
             schemas = arrayOf("public")
+            ignoreMigrationPatterns = arrayOf("*:pending")
         }
 
         shadowJar {
