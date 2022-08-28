@@ -6,6 +6,8 @@ import com.patrickpie12345.models.ReceiptCreate
 import com.patrickpie12345.service.aws.FileStorageService
 import com.patrickpie12345.storage.UpsertResult
 import com.patrickpie12345.storage.receipts.ReceiptStorage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.UUID
 
@@ -34,8 +36,9 @@ class ReceiptService(
         return receiptStorage.create(receiptCreate)
     }
 
-    suspend fun addImage(receiptId: String, image: File): UpsertResult<String> {
-        val imageUrl = fileStorageService.save(image)
-        return receiptStorage.addImage(receiptId = UUID.fromString(receiptId), imageUrl)
-    }
+    suspend fun addImage(receiptId: String, image: File): UpsertResult<String> =
+        withContext(Dispatchers.IO) {
+            val imageUrl = fileStorageService.save(image)
+            receiptStorage.addImage(receiptId = UUID.fromString(receiptId), imageUrl)
+        }
 }

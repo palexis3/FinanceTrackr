@@ -38,10 +38,10 @@ class ReceiptStorageVertx(private val client: SqlClient) : ReceiptStorage {
                 ($1, $2, $3) RETURNING *
             """.trimIndent(),
             args = Tuple.of(
-                newReceipt.title, newReceipt.price,
-                newReceipt.category
+                newReceipt.title, newReceipt.price, newReceipt.category
             )
         ).let { row ->
+
             when (row) {
                 null -> UpsertResult.NotOk("Failed to insert new receipt for ${newReceipt.title}")
                 else -> UpsertResult.Ok(row.toReceipt())
@@ -52,7 +52,7 @@ class ReceiptStorageVertx(private val client: SqlClient) : ReceiptStorage {
         fetchRow(
             client = client,
             query = """
-                UPDATE public.receipt SET image_url = $2 WHERE id = $1
+                UPDATE public.receipt SET image_url = $2 WHERE id = $1 RETURNING *
             """.trimIndent(),
             args = Tuple.of(receiptId, imageUrl)
         ).let { row ->

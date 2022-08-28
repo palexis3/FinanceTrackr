@@ -1,0 +1,1 @@
+ALTER TABLE public.receipt ALTER COLUMN image_url DROP NOT NULL;

@@ -74,9 +74,9 @@ fun Route.receiptRouting() {
                 image?.let { file ->
                     when (receiptService.addImage(id, file)) {
                         is UpsertResult.Ok -> call.respond(HttpStatusCode.Created)
-                        else -> call.respond(HttpStatusCode.InternalServerError)
+                        else -> call.respondText("Internal error: could not save image in database", status = HttpStatusCode.InternalServerError)
                     }
-                } ?: call.respond(HttpStatusCode.InternalServerError)
+                } ?: call.respondText("Internal error: image processed was null", status = HttpStatusCode.InternalServerError)
             } catch (ex: Exception) {
                 call.respondText(
                     "Exception occurred while processing image",
