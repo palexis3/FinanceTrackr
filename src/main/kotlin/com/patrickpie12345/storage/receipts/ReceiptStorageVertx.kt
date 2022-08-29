@@ -1,8 +1,8 @@
 package com.patrickpie12345.storage.receipts
 
+import com.patrickpie12345.helper.NumberConverter
 import com.patrickpie12345.models.Page
-import com.patrickpie12345.models.receipt.Receipt
-import com.patrickpie12345.models.receipt.ReceiptCreate
+import com.patrickpie12345.models.receipt.*
 import com.patrickpie12345.storage.UpsertResult
 import com.patrickpie12345.storage.VertxStorageExtension.fetchRow
 import com.patrickpie12345.storage.VertxStorageExtension.fetchRowSet
@@ -60,4 +60,26 @@ class ReceiptStorageVertx(private val client: SqlClient) : ReceiptStorage {
                 else -> UpsertResult.Ok("Successfully updated receiptId: $receiptId with the following imageUrl: $imageUrl")
             }
         }
+
+    override suspend fun getCategorySum(categoryDBRequest: ReceiptAnalyticsCategoryDBRequest): Page<CategoryItem> =
+        fetchRowSet(
+            client = client,
+            query = """
+                SELECT COALESCE(SUM(price), 0) AS total, category FROM public.receipt WHERE 
+                category = COALESCE(NULLIF($1::text, ''), category::text)::category AND
+                created_at BETWEEN $2 AND now()
+                GROUP BY category
+            """.trimIndent(),
+            args = Tuple.of(categoryDBRequest.category, categoryDBRequest.beginningDate)
+        )?.let { rows ->
+            val size = rows.size()
+            val items = mutableListOf<CategoryItem>()
+            for (row in rows) {
+                items += CategoryItem(
+                    category = row.get(Category::class.java, "category"),
+                    total = NumberConverter.convertToDollarFormat(row.getFloat("total"))
+                )
+            }
+            Page(items, size)
+        } ?: Page(listOf(), 0)
 }
