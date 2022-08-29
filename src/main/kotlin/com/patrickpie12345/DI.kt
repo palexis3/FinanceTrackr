@@ -1,6 +1,7 @@
 package com.patrickpie12345
 
 import com.patrickpie12345.service.ReceiptService
+import com.patrickpie12345.service.analytics.ReceiptAnalyticsService
 import com.patrickpie12345.service.aws.AmazonFileStorageService
 import com.patrickpie12345.service.aws.FileStorageService
 import com.patrickpie12345.storage.receipts.ReceiptStorage
@@ -39,5 +40,6 @@ object DI {
 
         single<FileStorageService> { AmazonFileStorageService() }
         single { ReceiptService(get(), get()) }
+        single { ReceiptAnalyticsService(get()) }
     }
 }

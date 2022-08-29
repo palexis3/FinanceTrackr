@@ -1,9 +1,7 @@
 package com.patrickpie12345.storage.receipts
 
-import com.patrickpie12345.models.Category
 import com.patrickpie12345.models.Page
-import com.patrickpie12345.models.Receipt
-import com.patrickpie12345.models.ReceiptCreate
+import com.patrickpie12345.models.receipt.*
 import com.patrickpie12345.storage.UpsertResult
 import io.vertx.sqlclient.Row
 import java.time.ZoneOffset
@@ -23,4 +21,5 @@ interface ReceiptStorage {
     suspend fun getAll(): Page<Receipt>?
     suspend fun create(newReceipt: ReceiptCreate): UpsertResult<Receipt>
     suspend fun addImage(receiptId: UUID, imageUrl: String): UpsertResult<String>
+    suspend fun getCategorySum(categoryDBRequest: ReceiptAnalyticsCategoryDBRequest): Page<CategoryItem>
 }

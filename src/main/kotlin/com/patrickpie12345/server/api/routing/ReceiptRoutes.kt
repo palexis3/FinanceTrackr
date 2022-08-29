@@ -1,9 +1,11 @@
 package com.patrickpie12345.server.api.routing
 
 import com.patrickpie12345.extensions.toFile
-import com.patrickpie12345.models.Receipt
-import com.patrickpie12345.models.ReceiptCreate
+import com.patrickpie12345.models.receipt.Receipt
+import com.patrickpie12345.models.receipt.ReceiptAnalyticsRequest
+import com.patrickpie12345.models.receipt.ReceiptCreate
 import com.patrickpie12345.service.ReceiptService
+import com.patrickpie12345.service.analytics.ReceiptAnalyticsService
 import com.patrickpie12345.storage.UpsertResult
 import io.ktor.http.*
 import io.ktor.http.content.*
@@ -17,6 +19,7 @@ import java.io.File
 fun Route.receiptRouting() {
 
     val receiptService by getKoin().inject<ReceiptService>()
+    val analyticsService by getKoin().inject<ReceiptAnalyticsService>()
 
     route("/receipt") {
         get {
@@ -83,6 +86,13 @@ fun Route.receiptRouting() {
                     status = HttpStatusCode.InternalServerError
                 )
             }
+        }
+
+        get("/analytics/category") {
+            val request = call.receive<ReceiptAnalyticsRequest>()
+            val categoryResponse = analyticsService.getCategorySum(request)
+
+            call.respond(categoryResponse)
         }
     }
 }
