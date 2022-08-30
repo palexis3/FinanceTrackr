@@ -10,6 +10,7 @@ data class ReceiptAnalyticsRequest(
 
 data class ReceiptAnalyticsCategoryDBRequest(
     val beginningDate: OffsetDateTime,
+    val endingDate: OffsetDateTime,
     val category: Category?
 )
 

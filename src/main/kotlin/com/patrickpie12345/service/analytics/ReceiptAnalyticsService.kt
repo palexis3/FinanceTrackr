@@ -10,13 +10,20 @@ class ReceiptAnalyticsService(
     private val receiptStorage: ReceiptStorage
 ) {
 
-    suspend fun getCategorySum(request: ReceiptAnalyticsRequest): ReceiptAnalyticsCategoryResponse = withContext(Dispatchers.IO) {
-        val beginningDate = TimeDateConverter.getBeginningDate(request.timeToSearch)
-        val beginningDateOffsetDateTime = TimeDateConverter.stringToOffsetDateTime(beginningDate)
-        val dbRequest = ReceiptAnalyticsCategoryDBRequest(beginningDateOffsetDateTime, request.category)
+    suspend fun getCategorySum(request: ReceiptAnalyticsRequest): ReceiptAnalyticsCategoryResponse =
+        withContext(Dispatchers.IO) {
+            val offsetDateRange = TimeDateConverter.getOffsetDateRange(request.timeToSearch)
+            val dbRequest = ReceiptAnalyticsCategoryDBRequest(
+                offsetDateRange.startOffsetDate,
+                offsetDateRange.endOffsetDate,
+                request.category
+            )
 
-        val categoryItem = receiptStorage.getCategorySum(dbRequest)
-        val dateRange = TimeDateConverter.getDateRange(beginningDate).split("-")
-        ReceiptAnalyticsCategoryResponse(startDate = dateRange[0], endDate = dateRange[1], categoryItem.items)
-    }
+            val categoryItem = receiptStorage.getCategorySum(dbRequest)
+            val readableDateRange = TimeDateConverter.getReadableDateRange(
+                offsetDateRange.startOffsetDate,
+                offsetDateRange.endOffsetDate
+            )
+            ReceiptAnalyticsCategoryResponse(readableDateRange.startDate, readableDateRange.endDate, categoryItem.items)
+        }
 }
