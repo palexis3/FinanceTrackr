@@ -65,19 +65,20 @@ class ReceiptStorageVertx(private val client: SqlClient) : ReceiptStorage {
         fetchRowSet(
             client = client,
             query = """
-                SELECT COALESCE(SUM(price), 0) AS total, category FROM public.receipt WHERE 
+                SELECT COALESCE(SUM(price), 0) AS total, category
+                FROM public.receipt WHERE 
                 category = COALESCE(NULLIF($1::text, ''), category::text)::category AND
-                created_at BETWEEN $2 AND now()
+                created_at::date >= $2::date AND created_at::date <= $3::date
                 GROUP BY category
             """.trimIndent(),
-            args = Tuple.of(categoryDBRequest.category, categoryDBRequest.beginningDate)
+            args = Tuple.of(categoryDBRequest.category, categoryDBRequest.beginningDate, categoryDBRequest.endingDate)
         )?.let { rows ->
             val size = rows.size()
             val items = mutableListOf<CategoryItem>()
             for (row in rows) {
                 items += CategoryItem(
                     category = row.get(Category::class.java, "category"),
-                    total = NumberConverter.convertToDollarFormat(row.getFloat("total"))
+                    total = NumberConverter.floatToDollarConversion(row.getFloat("total"))
                 )
             }
             Page(items, size)
