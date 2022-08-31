@@ -78,7 +78,7 @@ class ReceiptStorageVertx(private val client: SqlClient) : ReceiptStorage {
             for (row in rows) {
                 items += CategoryItem(
                     category = row.get(Category::class.java, "category"),
-                    total = NumberConverter.convertToDollarFormat(row.getFloat("total"))
+                    total = NumberConverter.floatToDollarConversion(row.getFloat("total"))
                 )
             }
             Page(items, size)

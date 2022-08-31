@@ -5,11 +5,11 @@ import java.text.DecimalFormat
 
 object NumberConverter {
 
-    private val decimalFormat = DecimalFormat("#.##").apply {
+    private val decimalFormat = DecimalFormat("#.00").apply {
         this.roundingMode = RoundingMode.CEILING
     }
 
-    fun convertToDollarFormat(value: Float): Float {
+    fun floatToDollarConversion(value: Float): Float {
         return decimalFormat.format(value).toFloat()
     }
 }
