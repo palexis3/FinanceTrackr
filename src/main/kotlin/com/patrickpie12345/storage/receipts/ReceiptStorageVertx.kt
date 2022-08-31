@@ -65,9 +65,10 @@ class ReceiptStorageVertx(private val client: SqlClient) : ReceiptStorage {
         fetchRowSet(
             client = client,
             query = """
-                SELECT COALESCE(SUM(price), 0) AS total, category FROM public.receipt WHERE 
+                SELECT COALESCE(SUM(price), 0) AS total, category
+                FROM public.receipt WHERE 
                 category = COALESCE(NULLIF($1::text, ''), category::text)::category AND
-                created_at BETWEEN $2 AND $3
+                created_at::date >= $2::date AND created_at::date <= $3::date
                 GROUP BY category
             """.trimIndent(),
             args = Tuple.of(categoryDBRequest.category, categoryDBRequest.beginningDate, categoryDBRequest.endingDate)
