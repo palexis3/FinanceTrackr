@@ -1,8 +1,8 @@
 package com.patrickpie12345.helper
 
 import java.time.*
-import java.time.format.DateTimeFormatter
-import java.util.*
+import java.time.format.DateTimeFormatterBuilder
+import java.time.temporal.ChronoField
 
 enum class TimeInterval {
     DAY, WEEK, MONTH, YEAR
@@ -51,8 +51,10 @@ data class TimeToSearch(
 object TimeDateConverter {
 
     private const val DEFAULT_WEEK: Long = 1
-    private val OFFSET_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZone(ZoneId.from(ZoneOffset.UTC))
-    private val READABLE_DATE_FORMATTER = DateTimeFormatter.ofPattern("MMM dd, yyyy", Locale.ENGLISH)
+    private val READABLE_DATE_FORMATTER = DateTimeFormatterBuilder().appendPattern("MMM dd, yyyy").apply {
+        parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
+        parseDefaulting(ChronoField.MINUTE_OF_HOUR, 0)
+    }.toFormatter()
 
     fun getOffsetDateRange(timeToSearch: TimeToSearch?): OffsetDateRange {
         var startOffsetDate = OffsetDateTime.now().minusWeeks(DEFAULT_WEEK)
@@ -89,7 +91,7 @@ object TimeDateConverter {
     }
 
     private fun readableDateToOffsetDate(date: String): OffsetDateTime {
-        val dateTime = LocalDateTime.parse(date, OFFSET_DATE_FORMATTER)
+        val dateTime = LocalDateTime.parse(date, READABLE_DATE_FORMATTER)
         return OffsetDateTime.of(dateTime, ZoneOffset.UTC)
     }
 }
