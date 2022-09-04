@@ -1,0 +1,1 @@
+ALTER TABLE receipt RENAME TO receipts;
