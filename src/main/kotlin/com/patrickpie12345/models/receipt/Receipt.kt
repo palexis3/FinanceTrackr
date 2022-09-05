@@ -13,7 +13,7 @@ data class Receipt(
     val title: String,
     val price: Float,
     val imageId: UUID? = null,
-    val storeId: UUID? = null,
+    val storeId: UUID,
     val createdAt: Instant
 )
 
