@@ -11,8 +11,8 @@ fun Row.toReceipt() = Receipt(
     id = this.getUUID("id"),
     title = this.getString("title"),
     price = this.getFloat("price"),
-    imageUrl = this.getString("image_url"),
-    category = this.get(Category::class.java, "category"),
+    imageId = this.getUUID("image_id"),
+    storeId = this.getUUID("store_id"),
     createdAt = this.getLocalDateTime("created_at").toInstant(ZoneOffset.UTC)
 )
 
@@ -20,6 +20,6 @@ interface ReceiptStorage {
     suspend fun get(id: UUID): Receipt?
     suspend fun getAll(): Page<Receipt>?
     suspend fun create(newReceipt: ReceiptCreate): UpsertResult<Receipt>
-    suspend fun addImage(receiptId: UUID, imageUrl: String): UpsertResult<String>
+    suspend fun addImageId(receiptId: UUID, imageId: UUID): UpsertResult<String>
     suspend fun getCategorySum(categoryDBRequest: ReceiptAnalyticsCategoryDBRequest): Page<CategoryItem>
 }

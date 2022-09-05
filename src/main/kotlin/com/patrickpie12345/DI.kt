@@ -4,6 +4,8 @@ import com.patrickpie12345.service.ReceiptService
 import com.patrickpie12345.service.analytics.ReceiptAnalyticsService
 import com.patrickpie12345.service.aws.AmazonFileStorageService
 import com.patrickpie12345.service.aws.FileStorageService
+import com.patrickpie12345.storage.images.ImageStorage
+import com.patrickpie12345.storage.images.ImageStorageVertx
 import com.patrickpie12345.storage.receipts.ReceiptStorage
 import com.patrickpie12345.storage.receipts.ReceiptStorageVertx
 import io.vertx.core.Vertx
@@ -37,9 +39,10 @@ object DI {
         single<SqlClient> { get<PgPool>() }
 
         single<ReceiptStorage> { ReceiptStorageVertx(get()) }
+        single<ImageStorage> { ImageStorageVertx(get()) }
 
         single<FileStorageService> { AmazonFileStorageService() }
-        single { ReceiptService(get(), get()) }
+        single { ReceiptService(get(), get(), get()) }
         single { ReceiptAnalyticsService(get()) }
     }
 }

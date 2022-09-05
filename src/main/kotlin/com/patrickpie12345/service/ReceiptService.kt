@@ -5,6 +5,7 @@ import com.patrickpie12345.models.receipt.Receipt
 import com.patrickpie12345.models.receipt.ReceiptCreate
 import com.patrickpie12345.service.aws.FileStorageService
 import com.patrickpie12345.storage.UpsertResult
+import com.patrickpie12345.storage.images.ImageStorage
 import com.patrickpie12345.storage.receipts.ReceiptStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -13,7 +14,8 @@ import java.util.UUID
 
 class ReceiptService(
     private val receiptStorage: ReceiptStorage,
-    private val fileStorageService: FileStorageService
+    private val fileStorageService: FileStorageService,
+    private val imageStorage: ImageStorage
 ) {
 
     suspend fun getAll(): Page<Receipt>? {
@@ -32,6 +34,7 @@ class ReceiptService(
         }
     }
 
+    // TODO: Include store info with receipt where we'll query based on the name and category of the store
     suspend fun create(receiptCreate: ReceiptCreate): UpsertResult<Receipt> {
         return receiptStorage.create(receiptCreate)
     }
@@ -39,6 +42,12 @@ class ReceiptService(
     suspend fun addImage(receiptId: String, image: File): UpsertResult<String> =
         withContext(Dispatchers.IO) {
             val imageUrl = fileStorageService.save(image)
-            receiptStorage.addImage(receiptId = UUID.fromString(receiptId), imageUrl)
+            when (val imageIdUpsertResult = imageStorage.addImage(imageUrl)) {
+                is UpsertResult.Ok -> receiptStorage.addImageId(
+                    receiptId = UUID.fromString(receiptId),
+                    imageId = imageIdUpsertResult.result
+                )
+                else -> UpsertResult.NotOk("Error inserting image for receipt: $receiptId")
+            }
         }
 }

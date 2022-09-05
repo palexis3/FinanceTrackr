@@ -5,13 +5,13 @@ import java.time.OffsetDateTime
 
 data class ReceiptAnalyticsRequest(
     val timeToSearch: TimeToSearch? = null,
-    val category: Category? = null
+    val category: StoreCategory? = null
 )
 
 data class ReceiptAnalyticsCategoryDBRequest(
     val beginningDate: OffsetDateTime,
     val endingDate: OffsetDateTime,
-    val category: Category?
+    val category: StoreCategory?
 )
 
 data class ReceiptAnalyticsCategoryResponse(
@@ -21,6 +21,6 @@ data class ReceiptAnalyticsCategoryResponse(
 )
 
 data class CategoryItem(
-    val category: Category,
+    val category: StoreCategory,
     val total: Float
 )
