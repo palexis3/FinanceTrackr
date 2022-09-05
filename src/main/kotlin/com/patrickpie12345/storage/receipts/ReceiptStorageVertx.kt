@@ -30,15 +30,16 @@ class ReceiptStorageVertx(private val client: SqlClient) : ReceiptStorage {
             Page(receipts, total)
         }
 
+    // TODO: Patrick when we're creating a receipt, we must include the store that will then include the store id
     override suspend fun create(newReceipt: ReceiptCreate): UpsertResult<Receipt> =
         fetchRow(
             client = client,
             query = """
-                INSERT INTO public.receipt (title, price, category) VALUES
-                ($1, $2, $3) RETURNING *
+                INSERT INTO public.receipt (title, price) VALUES
+                ($1, $2) RETURNING *
             """.trimIndent(),
             args = Tuple.of(
-                newReceipt.title, newReceipt.price, newReceipt.category
+                newReceipt.title, newReceipt.price
             )
         ).let { row ->
             when (row) {
@@ -47,20 +48,21 @@ class ReceiptStorageVertx(private val client: SqlClient) : ReceiptStorage {
             }
         }
 
-    override suspend fun addImage(receiptId: UUID, imageUrl: String): UpsertResult<String> =
+    override suspend fun addImageId(receiptId: UUID, imageId: UUID): UpsertResult<String> =
         fetchRow(
             client = client,
             query = """
-                UPDATE public.receipt SET image_url = $2 WHERE id = $1 RETURNING image_url
+                UPDATE public.receipt SET image_id = $2 WHERE id = $1 RETURNING image_id
             """.trimIndent(),
-            args = Tuple.of(receiptId, imageUrl)
+            args = Tuple.of(receiptId, imageId)
         ).let { row ->
             when (row) {
                 null -> UpsertResult.NotOk("Failed to update receiptId: $receiptId with image url")
-                else -> UpsertResult.Ok("Successfully updated receiptId: $receiptId with the following imageUrl: $imageUrl")
+                else -> UpsertResult.Ok("Successfully updated receiptId: $receiptId with the following imageId: $imageId")
             }
         }
 
+    // TODO: Patrick update category analytics to include store ids
     override suspend fun getCategorySum(categoryDBRequest: ReceiptAnalyticsCategoryDBRequest): Page<CategoryItem> =
         fetchRowSet(
             client = client,
@@ -77,7 +79,7 @@ class ReceiptStorageVertx(private val client: SqlClient) : ReceiptStorage {
             val items = mutableListOf<CategoryItem>()
             for (row in rows) {
                 items += CategoryItem(
-                    category = row.get(Category::class.java, "category"),
+                    category = row.get(StoreCategory::class.java, "category"),
                     total = NumberConverter.floatToDollarConversion(row.getFloat("total"))
                 )
             }
