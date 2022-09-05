@@ -2,12 +2,14 @@ package com.patrickpie12345
 
 import com.patrickpie12345.service.ReceiptService
 import com.patrickpie12345.service.analytics.ReceiptAnalyticsService
-import com.patrickpie12345.service.aws.AmazonFileStorageService
-import com.patrickpie12345.service.aws.FileStorageService
+import com.patrickpie12345.service.aws.AwsImageStorageService
+import com.patrickpie12345.service.aws.AwsStorageService
 import com.patrickpie12345.storage.images.ImageStorage
 import com.patrickpie12345.storage.images.ImageStorageVertx
 import com.patrickpie12345.storage.receipts.ReceiptStorage
 import com.patrickpie12345.storage.receipts.ReceiptStorageVertx
+import com.patrickpie12345.storage.stores.StoresStorage
+import com.patrickpie12345.storage.stores.StoresStorageVertx
 import io.vertx.core.Vertx
 import io.vertx.pgclient.PgConnectOptions
 import io.vertx.pgclient.PgPool
@@ -40,9 +42,10 @@ object DI {
 
         single<ReceiptStorage> { ReceiptStorageVertx(get()) }
         single<ImageStorage> { ImageStorageVertx(get()) }
+        single<StoresStorage> { StoresStorageVertx(get()) }
 
-        single<FileStorageService> { AmazonFileStorageService() }
-        single { ReceiptService(get(), get(), get()) }
+        single<AwsStorageService> { AwsImageStorageService() }
+        single { ReceiptService(get(), get(), get(), get()) }
         single { ReceiptAnalyticsService(get()) }
     }
 }

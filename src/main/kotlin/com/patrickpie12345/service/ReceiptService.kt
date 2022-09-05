@@ -3,10 +3,12 @@ package com.patrickpie12345.service
 import com.patrickpie12345.models.Page
 import com.patrickpie12345.models.receipt.Receipt
 import com.patrickpie12345.models.receipt.ReceiptCreate
-import com.patrickpie12345.service.aws.FileStorageService
+import com.patrickpie12345.models.receipt.ReceiptDBCreate
+import com.patrickpie12345.service.aws.AwsStorageService
 import com.patrickpie12345.storage.UpsertResult
 import com.patrickpie12345.storage.images.ImageStorage
 import com.patrickpie12345.storage.receipts.ReceiptStorage
+import com.patrickpie12345.storage.stores.StoresStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -14,14 +16,15 @@ import java.util.UUID
 
 class ReceiptService(
     private val receiptStorage: ReceiptStorage,
-    private val fileStorageService: FileStorageService,
-    private val imageStorage: ImageStorage
+    private val awsStorageService: AwsStorageService,
+    private val imageStorage: ImageStorage,
+    private val storesStorage: StoresStorage
 ) {
 
     suspend fun getAll(): Page<Receipt>? {
-        val receiptWrapper = receiptStorage.getAll()
-        return if (receiptWrapper != null && receiptWrapper.items.isNotEmpty()) {
-            receiptWrapper
+        val receiptPage = receiptStorage.getAll()
+        return if (receiptPage != null && receiptPage.items.isNotEmpty()) {
+            receiptPage
         } else {
             null
         }
@@ -34,14 +37,24 @@ class ReceiptService(
         }
     }
 
-    // TODO: Include store info with receipt where we'll query based on the name and category of the store
-    suspend fun create(receiptCreate: ReceiptCreate): UpsertResult<Receipt> {
-        return receiptStorage.create(receiptCreate)
-    }
+    suspend fun create(receiptCreate: ReceiptCreate): UpsertResult<Receipt> =
+        withContext(Dispatchers.IO) {
+            when (val store = storesStorage.saveStore(receiptCreate.storeCreate)) {
+                is UpsertResult.Ok -> {
+                    val receiptDBCreate = ReceiptDBCreate(
+                        title = receiptCreate.title,
+                        price = receiptCreate.price,
+                        storeId = store.result.id
+                    )
+                    receiptStorage.create(receiptDBCreate)
+                }
+                else -> UpsertResult.NotOk("Could not create receipt: ${receiptCreate.title}")
+            }
+        }
 
     suspend fun addImage(receiptId: String, image: File): UpsertResult<String> =
         withContext(Dispatchers.IO) {
-            val imageUrl = fileStorageService.save(image)
+            val imageUrl = awsStorageService.save(image)
             when (val imageIdUpsertResult = imageStorage.addImage(imageUrl)) {
                 is UpsertResult.Ok -> receiptStorage.addImageId(
                     receiptId = UUID.fromString(receiptId),

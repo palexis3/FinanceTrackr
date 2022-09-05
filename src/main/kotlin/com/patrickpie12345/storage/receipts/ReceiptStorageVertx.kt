@@ -3,6 +3,7 @@ package com.patrickpie12345.storage.receipts
 import com.patrickpie12345.helper.NumberConverter
 import com.patrickpie12345.models.Page
 import com.patrickpie12345.models.receipt.*
+import com.patrickpie12345.models.store.StoreCategory
 import com.patrickpie12345.storage.UpsertResult
 import com.patrickpie12345.storage.VertxStorageExtension.fetchRow
 import com.patrickpie12345.storage.VertxStorageExtension.fetchRowSet
@@ -30,16 +31,15 @@ class ReceiptStorageVertx(private val client: SqlClient) : ReceiptStorage {
             Page(receipts, total)
         }
 
-    // TODO: Patrick when we're creating a receipt, we must include the store that will then include the store id
-    override suspend fun create(newReceipt: ReceiptCreate): UpsertResult<Receipt> =
+    override suspend fun create(newReceipt: ReceiptDBCreate): UpsertResult<Receipt> =
         fetchRow(
             client = client,
             query = """
-                INSERT INTO public.receipt (title, price) VALUES
-                ($1, $2) RETURNING *
+                INSERT INTO public.receipt (title, price, store_id) VALUES
+                ($1, $2, $3) RETURNING *
             """.trimIndent(),
             args = Tuple.of(
-                newReceipt.title, newReceipt.price
+                newReceipt.title, newReceipt.price, newReceipt.storeId
             )
         ).let { row ->
             when (row) {
