@@ -10,11 +10,25 @@ import io.vertx.sqlclient.Tuple
 
 class StoresStorageVertx(private val client: SqlClient) : StoresStorage {
 
+    /**
+     * The saveStore method is in charge of creating a new store if there doesn't
+     * exist a current store that matches the unique store name. Therefore, we must
+     * run a sub-query to check and see if there exists already a row with the same store
+     * name since there's a UNIQUE constraint on it.
+     */
     override suspend fun saveStore(store: StoreCreate): UpsertResult<Store> =
         fetchRow(
             client = client,
             query = """
-                INSERT INTO public.stores (name, category) VALUES ($1, $2) RETURNING *
+                WITH new_row AS (
+                    INSERT INTO public.stores (name, category)
+                        SELECT $1, $2
+                            WHERE NOT EXISTS (SELECT 1 FROM public.stores WHERE name = $1)
+                    RETURNING *
+                )
+                SELECT * FROM new_row
+                UNION
+                SELECT * FROM public.stores WHERE name = $1;
             """.trimIndent(),
             args = Tuple.of(store.name, store.category)
         ).let { row ->

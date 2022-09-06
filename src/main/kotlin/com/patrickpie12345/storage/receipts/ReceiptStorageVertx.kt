@@ -16,14 +16,14 @@ class ReceiptStorageVertx(private val client: SqlClient) : ReceiptStorage {
     override suspend fun get(id: UUID): Receipt? =
         fetchRow(
             client = client,
-            query = "SELECT * FROM public.receipt WHERE id = $1",
+            query = "SELECT * FROM public.receipts WHERE id = $1",
             args = Tuple.of(id)
         )?.toReceipt()
 
     override suspend fun getAll(): Page<Receipt>? =
         fetchRowSet(
             client = client,
-            query = "SELECT * FROM public.receipt",
+            query = "SELECT * FROM public.receipts",
             args = Tuple.tuple()
         )?.let { rows ->
             val total = rows.size()
@@ -35,7 +35,7 @@ class ReceiptStorageVertx(private val client: SqlClient) : ReceiptStorage {
         fetchRow(
             client = client,
             query = """
-                INSERT INTO public.receipt (title, price, store_id) VALUES
+                INSERT INTO public.receipts (title, price, store_id) VALUES
                 ($1, $2, $3) RETURNING *
             """.trimIndent(),
             args = Tuple.of(
@@ -52,7 +52,7 @@ class ReceiptStorageVertx(private val client: SqlClient) : ReceiptStorage {
         fetchRow(
             client = client,
             query = """
-                UPDATE public.receipt SET image_id = $2 WHERE id = $1 RETURNING image_id
+                UPDATE public.receipts SET image_id = $2 WHERE id = $1 RETURNING image_id
             """.trimIndent(),
             args = Tuple.of(receiptId, imageId)
         ).let { row ->
@@ -68,7 +68,7 @@ class ReceiptStorageVertx(private val client: SqlClient) : ReceiptStorage {
             client = client,
             query = """
                 SELECT COALESCE(SUM(price), 0) AS total, category
-                FROM public.receipt WHERE 
+                FROM public.receipts WHERE 
                 category = COALESCE(NULLIF($1::text, ''), category::text)::category AND
                 created_at::date >= $2::date AND created_at::date <= $3::date
                 GROUP BY category

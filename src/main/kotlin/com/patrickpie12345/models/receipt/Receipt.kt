@@ -19,7 +19,7 @@ data class Receipt(
 data class ReceiptCreate(
     val title: String,
     val price: Float,
-    val storeCreate: StoreCreate
+    val store: StoreCreate
 )
 
 data class ReceiptDBCreate(
