@@ -69,7 +69,7 @@ class ReceiptStorageVertx(private val client: SqlClient) : ReceiptStorage {
             query = """
                 SELECT COALESCE(SUM(price), 0) AS total, category
                 FROM public.receipts WHERE 
-                category = COALESCE(NULLIF($1::text, ''), category::text)::category AND
+                category = COALESCE(NULLIF($1::text, ''), category::text)::storeCategory AND
                 created_at::date >= $2::date AND created_at::date <= $3::date
                 GROUP BY category
             """.trimIndent(),
