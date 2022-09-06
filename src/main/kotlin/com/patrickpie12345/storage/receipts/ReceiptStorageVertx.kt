@@ -3,6 +3,7 @@ package com.patrickpie12345.storage.receipts
 import com.patrickpie12345.helper.NumberConverter
 import com.patrickpie12345.models.Page
 import com.patrickpie12345.models.receipt.*
+import com.patrickpie12345.models.store.StoreCategory
 import com.patrickpie12345.storage.UpsertResult
 import com.patrickpie12345.storage.VertxStorageExtension.fetchRow
 import com.patrickpie12345.storage.VertxStorageExtension.fetchRowSet
@@ -15,14 +16,14 @@ class ReceiptStorageVertx(private val client: SqlClient) : ReceiptStorage {
     override suspend fun get(id: UUID): Receipt? =
         fetchRow(
             client = client,
-            query = "SELECT * FROM public.receipt WHERE id = $1",
+            query = "SELECT * FROM public.receipts WHERE id = $1",
             args = Tuple.of(id)
         )?.toReceipt()
 
     override suspend fun getAll(): Page<Receipt>? =
         fetchRowSet(
             client = client,
-            query = "SELECT * FROM public.receipt",
+            query = "SELECT * FROM public.receipts",
             args = Tuple.tuple()
         )?.let { rows ->
             val total = rows.size()
@@ -30,16 +31,15 @@ class ReceiptStorageVertx(private val client: SqlClient) : ReceiptStorage {
             Page(receipts, total)
         }
 
-    // TODO: Patrick when we're creating a receipt, we must include the store that will then include the store id
-    override suspend fun create(newReceipt: ReceiptCreate): UpsertResult<Receipt> =
+    override suspend fun create(newReceipt: ReceiptDBCreate): UpsertResult<Receipt> =
         fetchRow(
             client = client,
             query = """
-                INSERT INTO public.receipt (title, price) VALUES
-                ($1, $2) RETURNING *
+                INSERT INTO public.receipts (title, price, store_id) VALUES
+                ($1, $2, $3) RETURNING *
             """.trimIndent(),
             args = Tuple.of(
-                newReceipt.title, newReceipt.price
+                newReceipt.title, newReceipt.price, newReceipt.storeId
             )
         ).let { row ->
             when (row) {
@@ -52,7 +52,7 @@ class ReceiptStorageVertx(private val client: SqlClient) : ReceiptStorage {
         fetchRow(
             client = client,
             query = """
-                UPDATE public.receipt SET image_id = $2 WHERE id = $1 RETURNING image_id
+                UPDATE public.receipts SET image_id = $2 WHERE id = $1 RETURNING image_id
             """.trimIndent(),
             args = Tuple.of(receiptId, imageId)
         ).let { row ->
@@ -68,7 +68,7 @@ class ReceiptStorageVertx(private val client: SqlClient) : ReceiptStorage {
             client = client,
             query = """
                 SELECT COALESCE(SUM(price), 0) AS total, category
-                FROM public.receipt WHERE 
+                FROM public.receipts WHERE 
                 category = COALESCE(NULLIF($1::text, ''), category::text)::category AND
                 created_at::date >= $2::date AND created_at::date <= $3::date
                 GROUP BY category

@@ -1,13 +1,11 @@
 package com.patrickpie12345.models.receipt
 
 import com.expediagroup.graphql.generator.annotations.GraphQLDescription
+import com.patrickpie12345.models.store.StoreCreate
 import java.time.Instant
 import java.util.*
 
-@GraphQLDescription("StoreCategory is used to describe what type of establishment we got this receipt from")
-enum class StoreCategory { GROCERY, SPECIALTY, DEPARTMENT, WAREHOUSE, DISCOUNT, CONVENIENCE, RESTAURANT }
-
-@GraphQLDescription("Receipt information to describe purchases")
+@GraphQLDescription("Receipt information to describe purchase(s)")
 data class Receipt(
     val id: UUID,
     val title: String,
@@ -17,9 +15,15 @@ data class Receipt(
     val createdAt: Instant
 )
 
+@GraphQLDescription("Receipt data object to create one")
 data class ReceiptCreate(
     val title: String,
     val price: Float,
-    val storeName: String,
-    val storeCategory: StoreCategory
+    val store: StoreCreate
+)
+
+data class ReceiptDBCreate(
+    val title: String,
+    val price: Float,
+    val storeId: UUID
 )

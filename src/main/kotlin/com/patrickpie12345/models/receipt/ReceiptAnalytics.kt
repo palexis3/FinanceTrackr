@@ -1,6 +1,7 @@
 package com.patrickpie12345.models.receipt
 
 import com.patrickpie12345.helper.TimeToSearch
+import com.patrickpie12345.models.store.StoreCategory
 import java.time.OffsetDateTime
 
 data class ReceiptAnalyticsRequest(
