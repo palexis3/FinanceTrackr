@@ -62,10 +62,13 @@ class ReceiptStorageVertx(private val client: SqlClient) : ReceiptStorage {
             }
         }
 
-    // The categories for each receipt is interpreted from the store associated with it that
-    // can be fetched from the store_id. we want to sum the prices in the left table (public.receipts)
-    // based on that store id, so we can do an inner join to select the rows that have the same
-    // store_id from receipts and tag with the id of the stores table.
+    /**
+     * The categories for each receipt is interpreted from the store associated with it that
+     * can be fetched from the store_id column. To sum the prices in the left table (public.receipts)
+     * based on that store id, there has to be an INNER JOIN  with the right table (public.stores)
+     * to select the rows that have the same store_id from receipts with the id of the stores table that
+     * has the desired category requested (if there isn't one, then all are selected)
+     */
     override suspend fun getCategorySum(categoryDBRequest: ReceiptAnalyticsCategoryDBRequest): Page<CategoryItem> =
         fetchRowSet(
             client = client,
