@@ -62,16 +62,20 @@ class ReceiptStorageVertx(private val client: SqlClient) : ReceiptStorage {
             }
         }
 
-    // TODO: Patrick update category analytics to include store ids
+    // The categories for each receipt is interpreted from the store associated with it that
+    // can be fetched from the store_id. we want to sum the prices in the left table (public.receipts)
+    // based on that store id, so we can do an inner join to select the rows that have the same
+    // store_id from receipts and tag with the id of the stores table.
     override suspend fun getCategorySum(categoryDBRequest: ReceiptAnalyticsCategoryDBRequest): Page<CategoryItem> =
         fetchRowSet(
             client = client,
             query = """
-                SELECT COALESCE(SUM(price), 0) AS total, category
-                FROM public.receipts WHERE 
-                category = COALESCE(NULLIF($1::text, ''), category::text)::storeCategory AND
-                created_at::date >= $2::date AND created_at::date <= $3::date
-                GROUP BY category
+                SELECT COALESCE(SUM(rec.price), 0) AS total, sto.category
+                FROM public.receipts AS rec INNER JOIN public.stores AS sto
+                ON rec.store_id = sto.id WHERE 
+                sto.category = COALESCE(NULLIF($1::text, ''), sto.category::text)::store_category AND
+                rec.created_at::date >= $2::date AND rec.created_at::date <= $3::date
+                GROUP BY sto.category
             """.trimIndent(),
             args = Tuple.of(categoryDBRequest.category, categoryDBRequest.beginningDate, categoryDBRequest.endingDate)
         )?.let { rows ->

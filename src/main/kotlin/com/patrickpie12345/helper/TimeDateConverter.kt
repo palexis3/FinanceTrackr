@@ -56,6 +56,8 @@ object TimeDateConverter {
         parseDefaulting(ChronoField.MINUTE_OF_HOUR, 0)
     }.toFormatter()
 
+    // TODO: Fix text 'Sep 6, 2022' could not be parsed at index 4. Basically an error involving
+    // a single digit day
     fun getOffsetDateRange(timeToSearch: TimeToSearch?): OffsetDateRange {
         var startOffsetDate = OffsetDateTime.now().minusWeeks(DEFAULT_WEEK)
         var endOffsetDate = OffsetDateTime.now()
