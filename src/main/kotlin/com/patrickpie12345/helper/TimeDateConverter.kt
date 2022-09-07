@@ -51,7 +51,7 @@ data class TimeToSearch(
 object TimeDateConverter {
 
     private const val DEFAULT_WEEK: Long = 1
-    private val READABLE_DATE_FORMATTER = DateTimeFormatterBuilder().appendPattern("MMM dd, yyyy").apply {
+    private val READABLE_DATE_FORMATTER = DateTimeFormatterBuilder().appendPattern("MMM d, yyyy").apply {
         parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
         parseDefaulting(ChronoField.MINUTE_OF_HOUR, 0)
     }.toFormatter()

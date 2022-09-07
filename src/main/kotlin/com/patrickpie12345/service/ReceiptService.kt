@@ -39,12 +39,12 @@ class ReceiptService(
 
     suspend fun create(receiptCreate: ReceiptCreate): UpsertResult<Receipt> =
         withContext(Dispatchers.IO) {
-            when (val store = storesStorage.saveStore(receiptCreate.store)) {
+            when (val storeUpsertResult = storesStorage.saveStore(receiptCreate.store)) {
                 is UpsertResult.Ok -> {
                     val receiptDBCreate = ReceiptDBCreate(
                         title = receiptCreate.title,
                         price = receiptCreate.price,
-                        storeId = store.result.id
+                        storeId = storeUpsertResult.result.id
                     )
                     receiptStorage.create(receiptDBCreate)
                 }

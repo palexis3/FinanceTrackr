@@ -17,20 +17,20 @@ class ReceiptMutation : Mutation {
 
     @GraphQLDescription("Add new receipt")
     suspend fun createReceipt(receipt: ReceiptCreate): Receipt? = run {
-        val upsertResult = when (val store = storesStorage.saveStore(receipt.store)) {
+        val receiptUpsertResult = when (val storeUpsertResult = storesStorage.saveStore(receipt.store)) {
             is UpsertResult.Ok -> {
                 val receiptDBCreate = ReceiptDBCreate(
                     title = receipt.title,
                     price = receipt.price,
-                    storeId = store.result.id
+                    storeId = storeUpsertResult.result.id
                 )
                 receiptStorage.create(receiptDBCreate)
             }
             else -> UpsertResult.NotOk("Could not create receipt: ${receipt.title}")
         }
 
-        when (upsertResult) {
-            is UpsertResult.Ok -> upsertResult.result
+        when (receiptUpsertResult) {
+            is UpsertResult.Ok -> receiptUpsertResult.result
             else -> null
         }
     }
