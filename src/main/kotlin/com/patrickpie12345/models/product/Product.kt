@@ -1,6 +1,7 @@
 package com.patrickpie12345.models.product
 
 import com.expediagroup.graphql.generator.annotations.GraphQLDescription
+import com.patrickpie12345.helper.FromNow
 import com.patrickpie12345.models.store.StoreCreate
 import java.time.Instant
 import java.util.*
@@ -20,6 +21,7 @@ data class ProductCreate(
     val name: String,
     val price: Float,
     val quantity: Int,
+    val expirationFromNow: FromNow,
     val stores: List<StoreCreate>
 )
 

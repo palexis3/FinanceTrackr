@@ -4,6 +4,7 @@ import com.patrickpie12345.models.product.Product
 import com.patrickpie12345.models.product.ProductDBCreate
 import com.patrickpie12345.models.product.ProductDBUpdate
 import com.patrickpie12345.storage.UpsertResult
+import com.patrickpie12345.storage.VertxStorageExtension.batch
 import com.patrickpie12345.storage.VertxStorageExtension.fetchRow
 import io.vertx.sqlclient.SqlClient
 import io.vertx.sqlclient.Tuple
@@ -18,7 +19,7 @@ class ProductStorageVertx(private val client: SqlClient) : ProductStorage {
             args = Tuple.of(id)
         )?.toProduct()
 
-    override suspend fun addProduct(productDBCreate: ProductDBCreate): UpsertResult<Product> =
+    override suspend fun saveProduct(productDBCreate: ProductDBCreate): UpsertResult<Product> =
         fetchRow(
             client = client,
             query = """
@@ -50,9 +51,21 @@ class ProductStorageVertx(private val client: SqlClient) : ProductStorage {
             }
         }
 
-    override suspend fun addStoresToProduct(productId: UUID, storeIds: List<UUID>): UpsertResult<String> {
-        TODO("Not yet implemented")
-    }
+    override suspend fun addProductToStores(productAndStoreTuples: List<Tuple>): UpsertResult<String> =
+        batch(
+            client = client,
+            query = """
+                INSERT INTO public.products_stores (product_id, store_id, updated_at, expired_at)
+                VALUES ($1, $2, $3, $4) RETURNING *
+            """.trimIndent(),
+            args = productAndStoreTuples
+        ).let { res ->
+            return if (res.rowCount() > 0) {
+                UpsertResult.Ok("Successfully inserted in batched entries for addStoresToProduct")
+            } else {
+                UpsertResult.NotOk("Failed to insert in batched entries for addStoresToProduct")
+            }
+        }
 
     override suspend fun addImageId(productId: UUID, imageId: UUID): UpsertResult<String> =
         fetchRow(
