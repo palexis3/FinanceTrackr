@@ -20,8 +20,7 @@ fun Row.toProduct() = Product(
 
 interface ProductStorage {
     suspend fun get(id: UUID): Product?
-    suspend fun saveProduct(productDBCreate: ProductDBCreate): UpsertResult<Product>
-    suspend fun updateProduct(productUpdate: ProductUpdate): UpsertResult<Product>
+    suspend fun create(productDBCreate: ProductDBCreate): UpsertResult<Product>
+    suspend fun update(productUpdate: ProductUpdate): UpsertResult<Product>
     suspend fun addProductToStores(productAndStoreTuples: List<Tuple>): UpsertResult<String>
-    suspend fun addImageId(productId: UUID, imageId: UUID): UpsertResult<String>
 }

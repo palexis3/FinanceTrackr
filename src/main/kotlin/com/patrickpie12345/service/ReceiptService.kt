@@ -4,7 +4,7 @@ import com.patrickpie12345.models.Page
 import com.patrickpie12345.models.receipt.Receipt
 import com.patrickpie12345.models.receipt.ReceiptCreate
 import com.patrickpie12345.models.receipt.ReceiptDBCreate
-import com.patrickpie12345.service.aws.AwsStorageService
+import com.patrickpie12345.service.aws.AwsUploadService
 import com.patrickpie12345.storage.UpsertResult
 import com.patrickpie12345.storage.images.ImageStorage
 import com.patrickpie12345.storage.receipts.ReceiptStorage
@@ -16,7 +16,7 @@ import java.util.UUID
 
 class ReceiptService(
     private val receiptStorage: ReceiptStorage,
-    private val awsStorageService: AwsStorageService,
+    private val awsUploadService: AwsUploadService,
     private val imageStorage: ImageStorage,
     private val storesStorage: StoresStorage
 ) {
@@ -54,7 +54,7 @@ class ReceiptService(
 
     suspend fun addImage(receiptId: String, image: File): UpsertResult<String> =
         withContext(Dispatchers.IO) {
-            val imageUrl = awsStorageService.save(image)
+            val imageUrl = awsUploadService.upload(image)
             when (val imageIdUpsertResult = imageStorage.addImage(imageUrl)) {
                 is UpsertResult.Ok -> receiptStorage.addImageId(
                     receiptId = UUID.fromString(receiptId),

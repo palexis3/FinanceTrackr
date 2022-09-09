@@ -9,7 +9,7 @@ import com.patrickpie12345.models.product.ProductCreate
 import com.patrickpie12345.models.product.ProductDBCreate
 import com.patrickpie12345.models.product.ProductUpdate
 import com.patrickpie12345.models.store.StoreCreate
-import com.patrickpie12345.service.aws.AwsStorageService
+import com.patrickpie12345.service.aws.AwsUploadService
 import com.patrickpie12345.storage.UpsertResult
 import com.patrickpie12345.storage.images.ImageStorage
 import com.patrickpie12345.storage.products.ProductStorage
@@ -23,7 +23,7 @@ class ProductService(
     private val productStorage: ProductStorage,
     private val storesStorage: StoresStorage,
     private val imageStorage: ImageStorage,
-    private val awsStorageService: AwsStorageService
+    private val awsUploadService: AwsUploadService
 ) {
 
     suspend fun get(id: String): Product? =
@@ -36,12 +36,12 @@ class ProductService(
 
     suspend fun updateProduct(productUpdate: ProductUpdate): UpsertResult<Product> =
         withContext(Dispatchers.IO) {
-            productStorage.updateProduct(productUpdate)
+            productStorage.update(productUpdate)
         }
 
     suspend fun addImage(productId: String, image: File): UpsertResult<String> =
         withContext(Dispatchers.IO) {
-            val imageUrl = awsStorageService.save(image)
+            val imageUrl = awsUploadService.upload(image)
             when (val imageIdUpsertResult = imageStorage.addImage(imageUrl)) {
                 is UpsertResult.Ok -> productStorage.addImageId(
                     productId = UUID.fromString(productId),
@@ -61,7 +61,7 @@ class ProductService(
     suspend fun saveProduct(productCreate: ProductCreate): UpsertResult<Product> =
         withContext(Dispatchers.IO) {
             val productDBCreate = ProductDBCreate(productCreate.name, productCreate.price, productCreate.quantity)
-            when (val productUpsertResult = productStorage.saveProduct(productDBCreate)) {
+            when (val productUpsertResult = productStorage.create(productDBCreate)) {
                 is UpsertResult.Ok -> {
                     val product = productUpsertResult.result
                     val expirationOffsetDateRange = getExpirationOffsetDateRange(

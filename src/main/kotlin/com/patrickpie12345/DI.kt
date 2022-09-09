@@ -2,8 +2,8 @@ package com.patrickpie12345
 
 import com.patrickpie12345.service.ReceiptService
 import com.patrickpie12345.service.analytics.ReceiptAnalyticsService
-import com.patrickpie12345.service.aws.AwsImageStorageService
-import com.patrickpie12345.service.aws.AwsStorageService
+import com.patrickpie12345.service.aws.AwsImageUploadService
+import com.patrickpie12345.service.aws.AwsUploadService
 import com.patrickpie12345.storage.images.ImageStorage
 import com.patrickpie12345.storage.images.ImageStorageVertx
 import com.patrickpie12345.storage.receipts.ReceiptStorage
@@ -44,7 +44,7 @@ object DI {
         single<ImageStorage> { ImageStorageVertx(get()) }
         single<StoresStorage> { StoresStorageVertx(get()) }
 
-        single<AwsStorageService> { AwsImageStorageService() }
+        single<AwsUploadService> { AwsImageUploadService() }
         single { ReceiptService(get(), get(), get(), get()) }
         single { ReceiptAnalyticsService(get()) }
     }

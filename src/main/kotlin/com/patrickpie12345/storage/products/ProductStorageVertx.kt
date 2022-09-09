@@ -6,11 +6,12 @@ import com.patrickpie12345.models.product.ProductUpdate
 import com.patrickpie12345.storage.UpsertResult
 import com.patrickpie12345.storage.VertxStorageExtension.batch
 import com.patrickpie12345.storage.VertxStorageExtension.fetchRow
+import com.patrickpie12345.storage.images.ItemImageStorage
 import io.vertx.sqlclient.SqlClient
 import io.vertx.sqlclient.Tuple
 import java.util.*
 
-class ProductStorageVertx(private val client: SqlClient) : ProductStorage {
+class ProductStorageVertx(private val client: SqlClient) : ProductStorage, ItemImageStorage {
 
     override suspend fun get(id: UUID): Product? =
         fetchRow(
@@ -19,7 +20,7 @@ class ProductStorageVertx(private val client: SqlClient) : ProductStorage {
             args = Tuple.of(id)
         )?.toProduct()
 
-    override suspend fun saveProduct(productDBCreate: ProductDBCreate): UpsertResult<Product> =
+    override suspend fun create(productDBCreate: ProductDBCreate): UpsertResult<Product> =
         fetchRow(
             client = client,
             query = """
@@ -34,7 +35,7 @@ class ProductStorageVertx(private val client: SqlClient) : ProductStorage {
             }
         }
 
-    override suspend fun updateProduct(productUpdate: ProductUpdate): UpsertResult<Product> =
+    override suspend fun update(productUpdate: ProductUpdate): UpsertResult<Product> =
         fetchRow(
             client = client,
             query = """

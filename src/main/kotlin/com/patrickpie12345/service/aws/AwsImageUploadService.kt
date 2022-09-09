@@ -12,7 +12,7 @@ import software.amazon.awssdk.services.s3.model.GetUrlRequest
 import software.amazon.awssdk.services.s3.model.PutObjectRequest
 import java.io.File
 
-class AwsImageStorageService : AwsStorageService {
+class AwsImageUploadService : AwsUploadService {
 
     private var client: S3Client
 
@@ -30,7 +30,7 @@ class AwsImageStorageService : AwsStorageService {
             .build()
     }
 
-    override suspend fun save(file: File): String =
+    override suspend fun upload(file: File): String =
         withContext(Dispatchers.IO) {
             client.putObject(
                 PutObjectRequest.builder().bucket(bucketName).key(file.name).build(),
