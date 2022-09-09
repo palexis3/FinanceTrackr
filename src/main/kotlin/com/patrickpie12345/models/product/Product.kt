@@ -31,7 +31,7 @@ data class ProductDBCreate(
     val quantity: Int
 )
 
-data class ProductDBUpdate(
+data class ProductUpdate(
     val id: UUID,
     val name: String? = null,
     val price: Float? = null,

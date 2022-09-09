@@ -2,7 +2,7 @@ package com.patrickpie12345.storage.products
 
 import com.patrickpie12345.models.product.Product
 import com.patrickpie12345.models.product.ProductDBCreate
-import com.patrickpie12345.models.product.ProductDBUpdate
+import com.patrickpie12345.models.product.ProductUpdate
 import com.patrickpie12345.storage.UpsertResult
 import com.patrickpie12345.storage.VertxStorageExtension.batch
 import com.patrickpie12345.storage.VertxStorageExtension.fetchRow
@@ -34,7 +34,7 @@ class ProductStorageVertx(private val client: SqlClient) : ProductStorage {
             }
         }
 
-    override suspend fun updateProduct(productDBUpdate: ProductDBUpdate): UpsertResult<Product> =
+    override suspend fun updateProduct(productUpdate: ProductUpdate): UpsertResult<Product> =
         fetchRow(
             client = client,
             query = """
@@ -43,10 +43,10 @@ class ProductStorageVertx(private val client: SqlClient) : ProductStorage {
                 WHERE id = $1
                 RETURNING *
             """.trimIndent(),
-            args = Tuple.of(productDBUpdate.id, productDBUpdate.name, productDBUpdate.price, productDBUpdate.quantity)
+            args = Tuple.of(productUpdate.id, productUpdate.name, productUpdate.price, productUpdate.quantity)
         ).let { row ->
             when (row) {
-                null -> UpsertResult.NotOk("Could not update product with id: ${productDBUpdate.id}")
+                null -> UpsertResult.NotOk("Could not update product with id: ${productUpdate.id}")
                 else -> UpsertResult.Ok(row.toProduct())
             }
         }

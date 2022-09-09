@@ -2,7 +2,7 @@ package com.patrickpie12345.storage.products
 
 import com.patrickpie12345.models.product.Product
 import com.patrickpie12345.models.product.ProductDBCreate
-import com.patrickpie12345.models.product.ProductDBUpdate
+import com.patrickpie12345.models.product.ProductUpdate
 import com.patrickpie12345.storage.UpsertResult
 import io.vertx.sqlclient.Row
 import io.vertx.sqlclient.Tuple
@@ -21,7 +21,7 @@ fun Row.toProduct() = Product(
 interface ProductStorage {
     suspend fun get(id: UUID): Product?
     suspend fun saveProduct(productDBCreate: ProductDBCreate): UpsertResult<Product>
-    suspend fun updateProduct(productDBUpdate: ProductDBUpdate): UpsertResult<Product>
+    suspend fun updateProduct(productUpdate: ProductUpdate): UpsertResult<Product>
     suspend fun addProductToStores(productAndStoreTuples: List<Tuple>): UpsertResult<String>
     suspend fun addImageId(productId: UUID, imageId: UUID): UpsertResult<String>
 }

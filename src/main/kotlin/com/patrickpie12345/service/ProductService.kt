@@ -7,7 +7,7 @@ import com.patrickpie12345.helper.TimeToSearch
 import com.patrickpie12345.models.product.Product
 import com.patrickpie12345.models.product.ProductCreate
 import com.patrickpie12345.models.product.ProductDBCreate
-import com.patrickpie12345.models.product.ProductDBUpdate
+import com.patrickpie12345.models.product.ProductUpdate
 import com.patrickpie12345.models.store.StoreCreate
 import com.patrickpie12345.service.aws.AwsStorageService
 import com.patrickpie12345.storage.UpsertResult
@@ -34,9 +34,9 @@ class ProductService(
             }
         }
 
-    suspend fun updateProduct(productDBUpdate: ProductDBUpdate): UpsertResult<Product> =
+    suspend fun updateProduct(productUpdate: ProductUpdate): UpsertResult<Product> =
         withContext(Dispatchers.IO) {
-            productStorage.updateProduct(productDBUpdate)
+            productStorage.updateProduct(productUpdate)
         }
 
     suspend fun addImage(productId: String, image: File): UpsertResult<String> =
