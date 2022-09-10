@@ -6,7 +6,7 @@ import io.vertx.sqlclient.SqlClient
 import io.vertx.sqlclient.Tuple
 import java.util.*
 
-class ImageStorageVertx(private val client: SqlClient) : ImageStorage {
+class ImagesTablesStorageVertx(private val client: SqlClient) : ImagesTablesStorage {
 
     override suspend fun addImage(awsS3Url: String): UpsertResult<UUID> =
         fetchRow(

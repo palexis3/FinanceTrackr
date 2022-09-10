@@ -3,12 +3,9 @@ package com.patrickpie12345
 import com.patrickpie12345.service.ReceiptService
 import com.patrickpie12345.service.analytics.ReceiptAnalyticsService
 import com.patrickpie12345.service.aws.AwsImageUploadService
-import com.patrickpie12345.service.aws.AwsUploadService
-import com.patrickpie12345.storage.images.ImageStorage
-import com.patrickpie12345.storage.images.ImageStorageVertx
-import com.patrickpie12345.storage.receipts.ReceiptStorage
+import com.patrickpie12345.storage.images.ImagesTablesStorageVertx
+import com.patrickpie12345.storage.products.ProductStorageVertx
 import com.patrickpie12345.storage.receipts.ReceiptStorageVertx
-import com.patrickpie12345.storage.stores.StoresStorage
 import com.patrickpie12345.storage.stores.StoresStorageVertx
 import io.vertx.core.Vertx
 import io.vertx.pgclient.PgConnectOptions
@@ -40,12 +37,13 @@ object DI {
 
         single<SqlClient> { get<PgPool>() }
 
-        single<ReceiptStorage> { ReceiptStorageVertx(get()) }
-        single<ImageStorage> { ImageStorageVertx(get()) }
-        single<StoresStorage> { StoresStorageVertx(get()) }
+        single { ReceiptStorageVertx(get()) }
+        single { StoresStorageVertx(get()) }
+        single { ProductStorageVertx(get()) }
+        single { ImagesTablesStorageVertx(get()) }
 
-        single<AwsUploadService> { AwsImageUploadService() }
-        single { ReceiptService(get(), get(), get(), get()) }
+        single { AwsImageUploadService() }
+        single { ReceiptService(get(), get()) }
         single { ReceiptAnalyticsService(get()) }
     }
 }
