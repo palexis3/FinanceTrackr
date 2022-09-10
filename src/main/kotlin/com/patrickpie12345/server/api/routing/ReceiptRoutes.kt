@@ -49,10 +49,10 @@ fun Route.receiptRouting() {
 
             when (receiptService.create(receiptCreate)) {
                 is UpsertResult.Ok -> {
-                    call.respondText("Receipt stored correctly", status = HttpStatusCode.Created)
+                    call.respondText("Receipt successfully stored!", status = HttpStatusCode.Created)
                 }
                 else -> {
-                    call.respondText("Receipt could not be created and stored.", status = HttpStatusCode.InternalServerError)
+                    call.respondText("Receipt could not be stored...", status = HttpStatusCode.InternalServerError)
                 }
             }
         }

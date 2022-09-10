@@ -1,5 +1,6 @@
 package com.patrickpie12345
 
+import com.patrickpie12345.service.ProductService
 import com.patrickpie12345.service.ReceiptService
 import com.patrickpie12345.service.analytics.ReceiptAnalyticsService
 import com.patrickpie12345.service.aws.AwsImageUploadService
@@ -44,6 +45,7 @@ object DI {
 
         single { AwsImageUploadService() }
         single { ReceiptService(get(), get()) }
+        single { ProductService(get(), get()) }
         single { ReceiptAnalyticsService(get()) }
     }
 }

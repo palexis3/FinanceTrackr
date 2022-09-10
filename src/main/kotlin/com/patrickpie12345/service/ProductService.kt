@@ -29,7 +29,7 @@ class ProductService(
             }
         }
 
-    suspend fun updateProduct(productUpdate: ProductUpdate): UpsertResult<Product> =
+    suspend fun update(productUpdate: ProductUpdate): UpsertResult<Product> =
         withContext(Dispatchers.IO) {
             productStorage.update(productUpdate)
         }
@@ -41,7 +41,7 @@ class ProductService(
      *  3. Get the expiration date that is calculated from the `fromNow` attribute attached to a product
      *  4. Create a list of tuples that will then be used as a batch insert
      */
-    suspend fun saveProduct(productCreate: ProductCreate): UpsertResult<Product> =
+    suspend fun create(productCreate: ProductCreate): UpsertResult<Product> =
         withContext(Dispatchers.IO) {
             val productDBCreate = ProductDBCreate(productCreate.name, productCreate.price, productCreate.quantity)
             when (val productUpsertResult = productStorage.create(productDBCreate)) {
