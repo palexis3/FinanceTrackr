@@ -9,22 +9,17 @@ import com.patrickpie12345.models.product.ProductCreate
 import com.patrickpie12345.models.product.ProductDBCreate
 import com.patrickpie12345.models.product.ProductUpdate
 import com.patrickpie12345.models.store.StoreCreate
-import com.patrickpie12345.service.aws.AwsStorageService
 import com.patrickpie12345.storage.UpsertResult
-import com.patrickpie12345.storage.images.ImageStorage
-import com.patrickpie12345.storage.products.ProductStorage
-import com.patrickpie12345.storage.stores.StoresStorage
+import com.patrickpie12345.storage.products.ProductStorageVertx
+import com.patrickpie12345.storage.stores.StoresStorageVertx
 import io.vertx.sqlclient.Tuple
 import kotlinx.coroutines.*
-import java.io.File
 import java.util.*
 
 class ProductService(
-    private val productStorage: ProductStorage,
-    private val storesStorage: StoresStorage,
-    private val imageStorage: ImageStorage,
-    private val awsStorageService: AwsStorageService
-) {
+    private val productStorage: ProductStorageVertx,
+    private val storesStorage: StoresStorageVertx
+) : ItemService(productStorage) {
 
     suspend fun get(id: String): Product? =
         withContext(Dispatchers.IO) {
@@ -36,19 +31,7 @@ class ProductService(
 
     suspend fun updateProduct(productUpdate: ProductUpdate): UpsertResult<Product> =
         withContext(Dispatchers.IO) {
-            productStorage.updateProduct(productUpdate)
-        }
-
-    suspend fun addImage(productId: String, image: File): UpsertResult<String> =
-        withContext(Dispatchers.IO) {
-            val imageUrl = awsStorageService.save(image)
-            when (val imageIdUpsertResult = imageStorage.addImage(imageUrl)) {
-                is UpsertResult.Ok -> productStorage.addImageId(
-                    productId = UUID.fromString(productId),
-                    imageId = imageIdUpsertResult.result
-                )
-                else -> UpsertResult.NotOk("Error inserting image for receipt: $productId")
-            }
+            productStorage.update(productUpdate)
         }
 
     /**
@@ -61,7 +44,7 @@ class ProductService(
     suspend fun saveProduct(productCreate: ProductCreate): UpsertResult<Product> =
         withContext(Dispatchers.IO) {
             val productDBCreate = ProductDBCreate(productCreate.name, productCreate.price, productCreate.quantity)
-            when (val productUpsertResult = productStorage.saveProduct(productDBCreate)) {
+            when (val productUpsertResult = productStorage.create(productDBCreate)) {
                 is UpsertResult.Ok -> {
                     val product = productUpsertResult.result
                     val expirationOffsetDateRange = getExpirationOffsetDateRange(

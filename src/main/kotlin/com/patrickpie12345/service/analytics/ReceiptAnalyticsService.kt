@@ -2,12 +2,12 @@ package com.patrickpie12345.service.analytics
 
 import com.patrickpie12345.helper.TimeDateConverter
 import com.patrickpie12345.models.receipt.*
-import com.patrickpie12345.storage.receipts.ReceiptStorage
+import com.patrickpie12345.storage.receipts.ReceiptStorageVertx
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class ReceiptAnalyticsService(
-    private val receiptStorage: ReceiptStorage
+    private val receiptStorage: ReceiptStorageVertx
 ) {
 
     suspend fun getCategorySum(request: ReceiptAnalyticsRequest): ReceiptAnalyticsCategoryResponse =

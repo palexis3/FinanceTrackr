@@ -7,11 +7,12 @@ import com.patrickpie12345.models.store.StoreCategory
 import com.patrickpie12345.storage.UpsertResult
 import com.patrickpie12345.storage.VertxStorageExtension.fetchRow
 import com.patrickpie12345.storage.VertxStorageExtension.fetchRowSet
+import com.patrickpie12345.storage.images.ItemImageStorage
 import io.vertx.sqlclient.SqlClient
 import io.vertx.sqlclient.Tuple
 import java.util.UUID
 
-class ReceiptStorageVertx(private val client: SqlClient) : ReceiptStorage {
+class ReceiptStorageVertx(private val client: SqlClient) : ReceiptStorage, ItemImageStorage {
 
     override suspend fun get(id: UUID): Receipt? =
         fetchRow(
