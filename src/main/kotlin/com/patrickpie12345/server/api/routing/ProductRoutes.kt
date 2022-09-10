@@ -17,6 +17,14 @@ fun Route.productRouting() {
     val productService by getKoin().inject<ProductService>()
 
     route("/product") {
+        get {
+            val result = productService.getAll()
+            if (result != null) {
+                call.respond(result)
+            } else {
+                call.respondText("No products found", status = HttpStatusCode.OK)
+            }
+        }
         get("{id?}") {
             val id = call.parameters["id"] ?: return@get call.respondText(
                 "Missing id",
@@ -44,6 +52,18 @@ fun Route.productRouting() {
             when (val productUpsertResult = productService.create(productCreate)) {
                 is UpsertResult.Ok -> call.respond(productUpsertResult.result)
                 else -> call.respondText("Product could not be created", status = HttpStatusCode.InternalServerError)
+            }
+        }
+
+        delete("{id?}") {
+            val id = call.parameters["id"] ?: return@delete call.respondText(
+                "Missing id",
+                status = HttpStatusCode.BadRequest
+            )
+
+            when (val productDeleteResult = productService.delete(id)) {
+                is UpsertResult.Ok -> call.respondText(productDeleteResult.result, status = HttpStatusCode.OK)
+                else -> call.respondText("Could not delete product..", status = HttpStatusCode.InternalServerError)
             }
         }
     }

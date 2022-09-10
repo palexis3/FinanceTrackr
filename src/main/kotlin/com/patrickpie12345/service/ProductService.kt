@@ -4,6 +4,7 @@ import com.patrickpie12345.helper.FromNow
 import com.patrickpie12345.helper.OffsetDateRange
 import com.patrickpie12345.helper.TimeDateConverter
 import com.patrickpie12345.helper.TimeToSearch
+import com.patrickpie12345.models.Page
 import com.patrickpie12345.models.product.Product
 import com.patrickpie12345.models.product.ProductCreate
 import com.patrickpie12345.models.product.ProductDBCreate
@@ -27,6 +28,20 @@ class ProductService(
                 null -> null
                 else -> product
             }
+        }
+
+    suspend fun getAll(): Page<Product>? = withContext(Dispatchers.IO) {
+        val productPage = productStorage.getAll()
+        if (productPage != null && productPage.items.isNotEmpty()) {
+            productPage
+        } else {
+            null
+        }
+    }
+
+    suspend fun delete(id: String): UpsertResult<String> =
+        withContext(Dispatchers.IO) {
+            productStorage.delete(UUID.fromString(id))
         }
 
     suspend fun update(productUpdate: ProductUpdate): UpsertResult<Product> =

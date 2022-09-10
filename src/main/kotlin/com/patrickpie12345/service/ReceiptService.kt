@@ -16,17 +16,17 @@ class ReceiptService(
     private val storesStorage: StoresStorageVertx
 ) : ItemService(receiptStorage) {
 
-    suspend fun getAll(): Page<Receipt>? {
+    suspend fun getAll(): Page<Receipt>? = withContext(Dispatchers.IO) {
         val receiptPage = receiptStorage.getAll()
-        return if (receiptPage != null && receiptPage.items.isNotEmpty()) {
+        if (receiptPage != null && receiptPage.items.isNotEmpty()) {
             receiptPage
         } else {
             null
         }
     }
 
-    suspend fun get(id: String): Receipt? {
-        return when (val receipt = receiptStorage.get(UUID.fromString(id))) {
+    suspend fun get(id: String): Receipt? = withContext(Dispatchers.IO) {
+        when (val receipt = receiptStorage.get(UUID.fromString(id))) {
             null -> null
             else -> receipt
         }
