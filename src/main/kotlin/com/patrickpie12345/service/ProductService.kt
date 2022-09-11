@@ -52,9 +52,9 @@ class ProductService(
     /**
      * To save a product, there's a few queries that must be made to save properly:
      *  1. Saving the intrinsic attributes associated with a product first then getting a productId
-     *  2. Save the list of stores associated with a product (if need be) with us getting the associated storeIds
+     *  2. Save the store associated with a product (if need be) with us getting the associated storeId
      *  3. Get the expiration date that is calculated from the `fromNow` attribute attached to a product
-     *  4. Create a list of tuples that will then be used as a batch insert
+     *  4. Create a tuple that will then be used as an insert
      */
     suspend fun create(productCreate: ProductCreate): UpsertResult<Product> =
         withContext(Dispatchers.IO) {
@@ -67,15 +67,14 @@ class ProductService(
                         productCreate.quantity
                     )
                     // must add attributes in order of table insertion [product_id, store_id, updated_at, expired_at]
-                    val storeProductTuples = getStoreIds(productCreate.stores).map { storeId ->
-                        Tuple.of(
-                            product.id,
-                            storeId,
-                            expirationOffsetDateRange.startOffsetDate,
-                            expirationOffsetDateRange.endOffsetDate
-                        )
-                    }
-                    productStorage.addProductToStores(storeProductTuples)
+                    val storeId = getStoreId(productCreate.store)
+                    val storeProductTuple = Tuple.of(
+                        product.id,
+                        storeId,
+                        expirationOffsetDateRange.startOffsetDate,
+                        expirationOffsetDateRange.endOffsetDate
+                    )
+                    productStorage.addProductToStore(storeProductTuple)
                     UpsertResult.Ok(product)
                 }
                 else -> UpsertResult.NotOk("Could not save product with product name: ${productCreate.name}")
@@ -94,15 +93,11 @@ class ProductService(
         return TimeDateConverter.getFutureOffsetDateRange(timeToSearch)
     }
 
-    private suspend fun getStoreIds(storeCreates: List<StoreCreate>): List<UUID> =
+    private suspend fun getStoreId(storeCreate: StoreCreate): UUID? =
         withContext(Dispatchers.IO) {
-            storeCreates.map { storeCreate ->
-                async {
-                    when (val storeUpsertResult = storesStorage.saveStore(storeCreate)) {
-                        is UpsertResult.Ok -> storeUpsertResult.result.id
-                        else -> null
-                    }
-                }
-            }.awaitAll().filterNotNull()
+            when (val storeUpsertResult = storesStorage.saveStore(storeCreate)) {
+                is UpsertResult.Ok -> storeUpsertResult.result.id
+                else -> null
+            }
         }
 }
