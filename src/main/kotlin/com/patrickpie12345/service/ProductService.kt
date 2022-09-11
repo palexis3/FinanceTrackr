@@ -4,6 +4,7 @@ import com.patrickpie12345.helper.FromNow
 import com.patrickpie12345.helper.OffsetDateRange
 import com.patrickpie12345.helper.TimeDateConverter
 import com.patrickpie12345.helper.TimeToSearch
+import com.patrickpie12345.models.Page
 import com.patrickpie12345.models.product.Product
 import com.patrickpie12345.models.product.ProductCreate
 import com.patrickpie12345.models.product.ProductDBCreate
@@ -29,7 +30,21 @@ class ProductService(
             }
         }
 
-    suspend fun updateProduct(productUpdate: ProductUpdate): UpsertResult<Product> =
+    suspend fun getAll(): Page<Product>? = withContext(Dispatchers.IO) {
+        val productPage = productStorage.getAll()
+        if (productPage != null && productPage.items.isNotEmpty()) {
+            productPage
+        } else {
+            null
+        }
+    }
+
+    suspend fun delete(id: String): UpsertResult<String> =
+        withContext(Dispatchers.IO) {
+            productStorage.delete(UUID.fromString(id))
+        }
+
+    suspend fun update(productUpdate: ProductUpdate): UpsertResult<Product> =
         withContext(Dispatchers.IO) {
             productStorage.update(productUpdate)
         }
@@ -37,11 +52,11 @@ class ProductService(
     /**
      * To save a product, there's a few queries that must be made to save properly:
      *  1. Saving the intrinsic attributes associated with a product first then getting a productId
-     *  2. Save the list of stores associated with a product (if need be) with us getting the associated storeIds
+     *  2. Save the store associated with a product (if need be) with us getting the associated storeId
      *  3. Get the expiration date that is calculated from the `fromNow` attribute attached to a product
-     *  4. Create a list of tuples that will then be used as a batch insert
+     *  4. Create a tuple that will then be used as an insert
      */
-    suspend fun saveProduct(productCreate: ProductCreate): UpsertResult<Product> =
+    suspend fun create(productCreate: ProductCreate): UpsertResult<Product> =
         withContext(Dispatchers.IO) {
             val productDBCreate = ProductDBCreate(productCreate.name, productCreate.price, productCreate.quantity)
             when (val productUpsertResult = productStorage.create(productDBCreate)) {
@@ -52,15 +67,14 @@ class ProductService(
                         productCreate.quantity
                     )
                     // must add attributes in order of table insertion [product_id, store_id, updated_at, expired_at]
-                    val storeProductTuples = getStoreIds(productCreate.stores).map { storeId ->
-                        Tuple.of(
-                            product.id,
-                            storeId,
-                            expirationOffsetDateRange.startOffsetDate,
-                            expirationOffsetDateRange.endOffsetDate
-                        )
-                    }
-                    productStorage.addProductToStores(storeProductTuples)
+                    val storeId = getStoreId(productCreate.store)
+                    val storeProductTuple = Tuple.of(
+                        product.id,
+                        storeId,
+                        expirationOffsetDateRange.startOffsetDate,
+                        expirationOffsetDateRange.endOffsetDate
+                    )
+                    productStorage.addProductToStore(storeProductTuple)
                     UpsertResult.Ok(product)
                 }
                 else -> UpsertResult.NotOk("Could not save product with product name: ${productCreate.name}")
@@ -68,7 +82,7 @@ class ProductService(
         }
 
     /**
-     * timeDuration is calculated based on how many products exist and their estimated longevity.
+     * `timeDuration` is calculated based on how many products exist and their estimated longevity.
      * Example: Let's say single pasta lasts 1 week, so 2 pastas should last 2 weeks
      */
     private fun getExpirationOffsetDateRange(fromNow: FromNow, quantity: Int): OffsetDateRange {
@@ -76,18 +90,14 @@ class ProductService(
         val timeToSearch = TimeToSearch(
             fromNow = FromNow(timeDuration, fromNow.timeInterval)
         )
-        return TimeDateConverter.getOffsetDateRange(timeToSearch)
+        return TimeDateConverter.getFutureOffsetDateRange(timeToSearch)
     }
 
-    private suspend fun getStoreIds(storeCreates: List<StoreCreate>): List<UUID> =
+    private suspend fun getStoreId(storeCreate: StoreCreate): UUID? =
         withContext(Dispatchers.IO) {
-            storeCreates.map { storeCreate ->
-                async {
-                    when (val storeUpsertResult = storesStorage.saveStore(storeCreate)) {
-                        is UpsertResult.Ok -> storeUpsertResult.result.id
-                        else -> null
-                    }
-                }
-            }.awaitAll().filterNotNull()
+            when (val storeUpsertResult = storesStorage.saveStore(storeCreate)) {
+                is UpsertResult.Ok -> storeUpsertResult.result.id
+                else -> null
+            }
         }
 }

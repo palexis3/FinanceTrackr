@@ -22,7 +22,7 @@ data class ProductCreate(
     val price: Float,
     val quantity: Int,
     val expirationFromNow: FromNow,
-    val stores: List<StoreCreate>
+    val store: StoreCreate
 )
 
 data class ProductDBCreate(

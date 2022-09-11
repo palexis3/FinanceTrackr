@@ -1,5 +1,6 @@
 package com.patrickpie12345.storage.products
 
+import com.patrickpie12345.models.Page
 import com.patrickpie12345.models.product.Product
 import com.patrickpie12345.models.product.ProductDBCreate
 import com.patrickpie12345.models.product.ProductUpdate
@@ -20,7 +21,9 @@ fun Row.toProduct() = Product(
 
 interface ProductStorage {
     suspend fun get(id: UUID): Product?
+    suspend fun getAll(): Page<Product>?
+    suspend fun delete(id: UUID): UpsertResult<String>
     suspend fun create(productDBCreate: ProductDBCreate): UpsertResult<Product>
     suspend fun update(productUpdate: ProductUpdate): UpsertResult<Product>
-    suspend fun addProductToStores(productAndStoreTuples: List<Tuple>): UpsertResult<String>
+    suspend fun addProductToStore(productAndStoreTuple: Tuple): UpsertResult<String>
 }

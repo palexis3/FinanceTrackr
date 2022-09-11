@@ -12,7 +12,7 @@ class ReceiptAnalyticsService(
 
     suspend fun getCategorySum(request: ReceiptAnalyticsRequest): ReceiptAnalyticsCategoryResponse =
         withContext(Dispatchers.IO) {
-            val offsetDateRange = TimeDateConverter.getOffsetDateRange(request.timeToSearch)
+            val offsetDateRange = TimeDateConverter.getPastOffsetDateRange(request.timeToSearch)
             val dbRequest = ReceiptAnalyticsCategoryDBRequest(
                 offsetDateRange.startOffsetDate,
                 offsetDateRange.endOffsetDate,

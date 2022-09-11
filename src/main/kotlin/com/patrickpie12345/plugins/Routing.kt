@@ -1,5 +1,6 @@
 package com.patrickpie12345.plugins
 
+import com.patrickpie12345.server.api.routing.productRouting
 import com.patrickpie12345.server.api.routing.receiptRouting
 import io.ktor.server.application.*
 import io.ktor.server.response.*
@@ -13,8 +14,9 @@ fun Application.configureRouting() {
             call.respondText("Hello World!")
         }
 
-        // HTTP APIs
+        // REST APIs
         receiptRouting()
+        productRouting()
 
         /**
          *  TODO: Patrick get back to implementing GraphQL Routing
