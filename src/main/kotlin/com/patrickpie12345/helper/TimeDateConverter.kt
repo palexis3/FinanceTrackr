@@ -56,7 +56,7 @@ object TimeDateConverter {
         parseDefaulting(ChronoField.MINUTE_OF_HOUR, 0)
     }.toFormatter()
 
-    fun getOffsetDateRange(timeToSearch: TimeToSearch?): OffsetDateRange {
+    fun getPastOffsetDateRange(timeToSearch: TimeToSearch?): OffsetDateRange {
         var startOffsetDate = OffsetDateTime.now().minusWeeks(DEFAULT_WEEK)
         var endOffsetDate = OffsetDateTime.now()
 
@@ -74,6 +74,23 @@ object TimeDateConverter {
                         TimeInterval.MONTH -> OffsetDateTime.now().minusMonths(fromNow.numOf)
                         TimeInterval.YEAR -> OffsetDateTime.now().minusYears(fromNow.numOf)
                     }
+                }
+            }
+        }
+        return OffsetDateRange(startOffsetDate, endOffsetDate)
+    }
+
+    fun getFutureOffsetDateRange(timeToSearch: TimeToSearch?): OffsetDateRange {
+        val startOffsetDate = OffsetDateTime.now()
+        var endOffsetDate = OffsetDateTime.now().plusWeeks(DEFAULT_WEEK)
+
+        if (timeToSearch != null) {
+            timeToSearch.fromNow?.let { fromNow ->
+                endOffsetDate = when (fromNow.timeInterval) {
+                    TimeInterval.DAY -> OffsetDateTime.now().plusDays(fromNow.numOf)
+                    TimeInterval.WEEK -> OffsetDateTime.now().plusWeeks(fromNow.numOf)
+                    TimeInterval.MONTH -> OffsetDateTime.now().plusMonths(fromNow.numOf)
+                    TimeInterval.YEAR -> OffsetDateTime.now().plusYears(fromNow.numOf)
                 }
             }
         }

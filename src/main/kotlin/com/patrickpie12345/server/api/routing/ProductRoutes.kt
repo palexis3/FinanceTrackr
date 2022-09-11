@@ -25,6 +25,7 @@ fun Route.productRouting() {
                 call.respondText("No products found", status = HttpStatusCode.OK)
             }
         }
+
         get("{id?}") {
             val id = call.parameters["id"] ?: return@get call.respondText(
                 "Missing id",

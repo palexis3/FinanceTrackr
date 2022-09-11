@@ -83,7 +83,7 @@ class ProductService(
         }
 
     /**
-     * timeDuration is calculated based on how many products exist and their estimated longevity.
+     * `timeDuration` is calculated based on how many products exist and their estimated longevity.
      * Example: Let's say single pasta lasts 1 week, so 2 pastas should last 2 weeks
      */
     private fun getExpirationOffsetDateRange(fromNow: FromNow, quantity: Int): OffsetDateRange {
@@ -91,7 +91,7 @@ class ProductService(
         val timeToSearch = TimeToSearch(
             fromNow = FromNow(timeDuration, fromNow.timeInterval)
         )
-        return TimeDateConverter.getOffsetDateRange(timeToSearch)
+        return TimeDateConverter.getFutureOffsetDateRange(timeToSearch)
     }
 
     private suspend fun getStoreIds(storeCreates: List<StoreCreate>): List<UUID> =
