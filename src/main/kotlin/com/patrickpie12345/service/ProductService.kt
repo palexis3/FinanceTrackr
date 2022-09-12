@@ -44,9 +44,31 @@ class ProductService(
             productStorage.delete(UUID.fromString(id))
         }
 
+    /**
+     * When we're updating a product, there's a possibility that we have to update
+     * the `quantity` and when we do, we must also include the time interval from
+     * to update the expiration date of the new quantity of the product
+     */
     suspend fun update(productUpdate: ProductUpdate): UpsertResult<Product> =
         withContext(Dispatchers.IO) {
-            productStorage.update(productUpdate)
+            val productToStoreUpsert = productUpdate.productExpiration?.let { productExpiration ->
+                val expirationOffsetDate = getExpirationOffsetDateRange(
+                    productExpiration.expirationFromNow,
+                    productExpiration.quantity
+                )
+                val productExpirationTuple = Tuple.of(
+                    productUpdate.id,
+                    expirationOffsetDate.startOffsetDate,
+                    expirationOffsetDate.endOffsetDate,
+                    productExpiration.quantity
+                )
+                productStorage.updateProductToStore(productExpirationTuple)
+            } ?: UpsertResult.Ok("Default for null product expiration parameter")
+
+            when (productToStoreUpsert) {
+                is UpsertResult.Ok -> productStorage.update(productUpdate)
+                else -> UpsertResult.NotOk("Product could not be updated...")
+            }
         }
 
     /**
@@ -58,7 +80,7 @@ class ProductService(
      */
     suspend fun create(productCreate: ProductCreate): UpsertResult<Product> =
         withContext(Dispatchers.IO) {
-            val productDBCreate = ProductDBCreate(productCreate.name, productCreate.price, productCreate.quantity)
+            val productDBCreate = ProductDBCreate(productCreate.name, productCreate.price)
             when (val productUpsertResult = productStorage.create(productDBCreate)) {
                 is UpsertResult.Ok -> {
                     val product = productUpsertResult.result
@@ -72,10 +94,13 @@ class ProductService(
                         product.id,
                         storeId,
                         expirationOffsetDateRange.startOffsetDate,
-                        expirationOffsetDateRange.endOffsetDate
+                        expirationOffsetDateRange.endOffsetDate,
+                        productCreate.quantity
                     )
-                    productStorage.addProductToStore(storeProductTuple)
-                    UpsertResult.Ok(product)
+                    when (productStorage.addProductToStore(storeProductTuple)) {
+                        is UpsertResult.Ok -> UpsertResult.Ok(product)
+                        else -> UpsertResult.NotOk("Could not save product with product name: ${productCreate.name}")
+                    }
                 }
                 else -> UpsertResult.NotOk("Could not save product with product name: ${productCreate.name}")
             }
@@ -93,11 +118,10 @@ class ProductService(
         return TimeDateConverter.getFutureOffsetDateRange(timeToSearch)
     }
 
-    private suspend fun getStoreId(storeCreate: StoreCreate): UUID? =
-        withContext(Dispatchers.IO) {
-            when (val storeUpsertResult = storesStorage.saveStore(storeCreate)) {
-                is UpsertResult.Ok -> storeUpsertResult.result.id
-                else -> null
-            }
+    private suspend fun getStoreId(storeCreate: StoreCreate): UUID? {
+        return when (val storeUpsertResult = storesStorage.saveStore(storeCreate)) {
+            is UpsertResult.Ok -> storeUpsertResult.result.id
+            else -> null
         }
+    }
 }

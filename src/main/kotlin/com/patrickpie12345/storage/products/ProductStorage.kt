@@ -14,7 +14,6 @@ fun Row.toProduct() = Product(
     id = this.getUUID("id"),
     name = this.getString("name"),
     price = this.getFloat("price"),
-    quantity = this.getInteger("quantity"),
     imageId = this.getUUID("image_id"),
     createdAt = this.getLocalDateTime("created_at").toInstant(ZoneOffset.UTC)
 )
@@ -25,5 +24,6 @@ interface ProductStorage {
     suspend fun delete(id: UUID): UpsertResult<String>
     suspend fun create(productDBCreate: ProductDBCreate): UpsertResult<Product>
     suspend fun update(productUpdate: ProductUpdate): UpsertResult<Product>
-    suspend fun addProductToStore(productAndStoreTuple: Tuple): UpsertResult<String>
+    suspend fun addProductToStore(productToStoreTuple: Tuple): UpsertResult<String>
+    suspend fun updateProductToStore(updateProductToStoreTuple: Tuple): UpsertResult<String>
 }

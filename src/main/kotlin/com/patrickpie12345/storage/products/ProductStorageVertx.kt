@@ -48,10 +48,10 @@ class ProductStorageVertx(private val client: SqlClient) : ProductStorage, ItemI
         fetchRow(
             client = client,
             query = """
-                INSERT INTO public.products (name, price, quantity) VALUES ($1, $2, $3)
+                INSERT INTO public.products (name, price) VALUES ($1, $2)
                 RETURNING *
             """.trimIndent(),
-            args = Tuple.of(productDBCreate.name, productDBCreate.price, productDBCreate.quantity)
+            args = Tuple.of(productDBCreate.name, productDBCreate.price)
         ).let { row ->
             when (row) {
                 null -> UpsertResult.NotOk("Could not insert product: ${productDBCreate.name}")
@@ -64,11 +64,11 @@ class ProductStorageVertx(private val client: SqlClient) : ProductStorage, ItemI
             client = client,
             query = """
                 UPDATE public.products SET 
-                name = COALESCE($2, name), price = COALESCE($3, price), quantity = COALESCE($4, quantity)
+                name = COALESCE($2, name), price = COALESCE($3, price)
                 WHERE id = $1
                 RETURNING *
             """.trimIndent(),
-            args = Tuple.of(productUpdate.id, productUpdate.name, productUpdate.price, productUpdate.quantity)
+            args = Tuple.of(productUpdate.id, productUpdate.name, productUpdate.price)
         ).let { row ->
             when (row) {
                 null -> UpsertResult.NotOk("Could not update product with id: ${productUpdate.id}")
@@ -76,18 +76,34 @@ class ProductStorageVertx(private val client: SqlClient) : ProductStorage, ItemI
             }
         }
 
-    override suspend fun addProductToStore(productAndStoreTuple: Tuple): UpsertResult<String> =
+    override suspend fun addProductToStore(productToStoreTuple: Tuple): UpsertResult<String> =
         fetchRow(
             client = client,
             query = """
-                INSERT INTO public.products_stores (product_id, store_id, updated_at, expired_at)
-                VALUES ($1, $2, $3, $4) RETURNING *
+                INSERT INTO public.products_stores (product_id, store_id, updated_at, expired_at, quantity)
+                VALUES ($1, $2, $3, $4, $5) RETURNING *
             """.trimIndent(),
-            args = productAndStoreTuple
+            args = productToStoreTuple
         ).let { row ->
             when (row) {
                 null -> UpsertResult.NotOk("Failed to insert in entry for addStoreToProduct")
                 else -> UpsertResult.Ok("Successfully inserted entry for addStoreToProduct")
+            }
+        }
+
+    override suspend fun updateProductToStore(updateProductToStoreTuple: Tuple): UpsertResult<String> =
+        fetchRow(
+            client = client,
+            query = """
+                 UPDATE public.products_stores SET updated_at = $2, expired_at = $3, quantity = $4
+                 WHERE product_id = $1
+                 RETURNING *
+            """.trimIndent(),
+            args = updateProductToStoreTuple
+        ).let { row ->
+            when (row) {
+                null -> UpsertResult.NotOk("Could not update product to store timestamps..")
+                else -> UpsertResult.Ok("Successfully updated product to store timestamps!")
             }
         }
 

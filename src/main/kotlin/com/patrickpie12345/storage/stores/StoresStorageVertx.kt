@@ -23,12 +23,12 @@ class StoresStorageVertx(private val client: SqlClient) : StoresStorage {
                 WITH new_row AS (
                     INSERT INTO public.stores (name, category)
                         SELECT $1, $2
-                            WHERE NOT EXISTS (SELECT 1 FROM public.stores WHERE name = $1)
+                            WHERE NOT EXISTS (SELECT 1 FROM public.stores WHERE name = $1 AND category = $2)
                     RETURNING *
                 )
                 SELECT * FROM new_row
                 UNION
-                SELECT * FROM public.stores WHERE name = $1;
+                SELECT * FROM public.stores WHERE name = $1 AND category = $2;
             """.trimIndent(),
             args = Tuple.of(store.name, store.category)
         ).let { row ->
