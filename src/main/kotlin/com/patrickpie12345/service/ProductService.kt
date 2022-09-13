@@ -41,7 +41,9 @@ class ProductService(
 
     suspend fun delete(id: String): UpsertResult<String> =
         withContext(Dispatchers.IO) {
-            productStorage.delete(UUID.fromString(id))
+            val productId = UUID.fromString(id)
+            productStorage.deleteProductToStores(productId)
+            productStorage.delete(productId)
         }
 
     /**

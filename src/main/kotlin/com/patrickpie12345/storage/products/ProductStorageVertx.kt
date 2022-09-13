@@ -35,7 +35,7 @@ class ProductStorageVertx(private val client: SqlClient) : ProductStorage, ItemI
     override suspend fun delete(id: UUID): UpsertResult<String> =
         fetchRow(
             client = client,
-            query = "DELETE * FROM public.products WHERE id = $1",
+            query = "DELETE FROM public.products WHERE id = $1 RETURNING *",
             args = Tuple.of(id)
         ).let { row ->
             when (row) {
@@ -104,6 +104,18 @@ class ProductStorageVertx(private val client: SqlClient) : ProductStorage, ItemI
             when (row) {
                 null -> UpsertResult.NotOk("Could not update product to store timestamps..")
                 else -> UpsertResult.Ok("Successfully updated product to store timestamps!")
+            }
+        }
+
+    override suspend fun deleteProductToStores(productId: UUID): UpsertResult<String> =
+        fetchRow(
+            client = client,
+            query = "DELETE FROM public.products_stores WHERE product_id = $1 RETURNING *",
+            args = Tuple.of(productId)
+        ).let { row ->
+            when (row) {
+                null -> UpsertResult.NotOk("Deleted the product stores relations with productId: $productId")
+                else -> UpsertResult.Ok("Could not delete the product stores relations with productId: $productId")
             }
         }
 

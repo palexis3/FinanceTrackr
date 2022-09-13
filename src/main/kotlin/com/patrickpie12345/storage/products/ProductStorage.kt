@@ -26,4 +26,5 @@ interface ProductStorage {
     suspend fun update(productUpdate: ProductUpdate): UpsertResult<Product>
     suspend fun addProductToStore(productToStoreTuple: Tuple): UpsertResult<String>
     suspend fun updateProductToStore(updateProductToStoreTuple: Tuple): UpsertResult<String>
+    suspend fun deleteProductToStores(productId: UUID): UpsertResult<String>
 }
