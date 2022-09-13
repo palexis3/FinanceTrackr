@@ -11,7 +11,6 @@ data class Product(
     val id: UUID,
     val name: String,
     val price: Float,
-    val quantity: Int,
     val imageId: UUID? = null,
     val createdAt: Instant
 )
@@ -27,13 +26,18 @@ data class ProductCreate(
 
 data class ProductDBCreate(
     val name: String,
-    val price: Float,
-    val quantity: Int
+    val price: Float
 )
 
+@GraphQLDescription("Product object to update one")
 data class ProductUpdate(
     val id: UUID,
     val name: String? = null,
     val price: Float? = null,
-    val quantity: Int? = null
+    val productExpiration: ProductExpiration? = null
+)
+
+data class ProductExpiration(
+    val quantity: Int,
+    val expirationFromNow: FromNow
 )
