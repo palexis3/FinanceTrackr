@@ -5,15 +5,11 @@ import com.patrickpie12345.helper.OffsetDateRange
 import com.patrickpie12345.helper.TimeDateConverter
 import com.patrickpie12345.helper.TimeToSearch
 import com.patrickpie12345.models.Page
-import com.patrickpie12345.models.product.Product
-import com.patrickpie12345.models.product.ProductCreate
-import com.patrickpie12345.models.product.ProductDBCreate
-import com.patrickpie12345.models.product.ProductUpdate
+import com.patrickpie12345.models.product.*
 import com.patrickpie12345.models.store.StoreCreate
 import com.patrickpie12345.storage.UpsertResult
 import com.patrickpie12345.storage.products.ProductStorageVertx
 import com.patrickpie12345.storage.stores.StoresStorageVertx
-import io.vertx.sqlclient.Tuple
 import kotlinx.coroutines.*
 import java.util.*
 
@@ -58,13 +54,13 @@ class ProductService(
                     productExpiration.expirationFromNow,
                     productExpiration.quantity
                 )
-                val productExpirationTuple = Tuple.of(
+                val productToStoreDBUpdate = ProductToStoreDBUpdate(
                     productUpdate.id,
                     expirationOffsetDate.startOffsetDate,
                     expirationOffsetDate.endOffsetDate,
                     productExpiration.quantity
                 )
-                productStorage.updateProductToStore(productExpirationTuple)
+                productStorage.updateProductToStore(productToStoreDBUpdate)
             } ?: UpsertResult.Ok("Default for null product expiration parameter")
 
             when (productToStoreUpsert) {
@@ -82,24 +78,25 @@ class ProductService(
      */
     suspend fun create(productCreate: ProductCreate): UpsertResult<Product> =
         withContext(Dispatchers.IO) {
-            val productDBCreate = ProductDBCreate(productCreate.name, productCreate.price)
+            val productDBCreate = ProductDBCreate(productCreate.name, productCreate.price, productCreate.category)
             when (val productUpsertResult = productStorage.create(productDBCreate)) {
                 is UpsertResult.Ok -> {
                     val product = productUpsertResult.result
+                    val productExpiration = productCreate.productExpiration
                     val expirationOffsetDateRange = getExpirationOffsetDateRange(
-                        productCreate.expirationFromNow,
-                        productCreate.quantity
+                        productExpiration.expirationFromNow,
+                        productExpiration.quantity
                     )
-                    // must add attributes in order of table insertion [product_id, store_id, updated_at, expired_at]
+                    // now adding what store, expiration date and quantity ties to this product
                     val storeId = getStoreId(productCreate.store)
-                    val storeProductTuple = Tuple.of(
+                    val productToStoreDBCreate = ProductToStoreDBCreate(
                         product.id,
                         storeId,
                         expirationOffsetDateRange.startOffsetDate,
                         expirationOffsetDateRange.endOffsetDate,
-                        productCreate.quantity
+                        productExpiration.quantity
                     )
-                    when (productStorage.addProductToStore(storeProductTuple)) {
+                    when (productStorage.addProductToStore(productToStoreDBCreate)) {
                         is UpsertResult.Ok -> UpsertResult.Ok(product)
                         else -> UpsertResult.NotOk("Could not save product with product name: ${productCreate.name}")
                     }

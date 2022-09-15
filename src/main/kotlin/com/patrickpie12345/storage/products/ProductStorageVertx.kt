@@ -1,9 +1,7 @@
 package com.patrickpie12345.storage.products
 
 import com.patrickpie12345.models.Page
-import com.patrickpie12345.models.product.Product
-import com.patrickpie12345.models.product.ProductDBCreate
-import com.patrickpie12345.models.product.ProductUpdate
+import com.patrickpie12345.models.product.*
 import com.patrickpie12345.storage.UpsertResult
 import com.patrickpie12345.storage.VertxStorageExtension.fetchRow
 import com.patrickpie12345.storage.VertxStorageExtension.fetchRowSet
@@ -48,10 +46,10 @@ class ProductStorageVertx(private val client: SqlClient) : ProductStorage, ItemI
         fetchRow(
             client = client,
             query = """
-                INSERT INTO public.products (name, price) VALUES ($1, $2)
+                INSERT INTO public.products (name, price, product_category) VALUES ($1, $2, $3)
                 RETURNING *
             """.trimIndent(),
-            args = Tuple.of(productDBCreate.name, productDBCreate.price)
+            args = Tuple.of(productDBCreate.name, productDBCreate.price, productDBCreate.category.canonicalName)
         ).let { row ->
             when (row) {
                 null -> UpsertResult.NotOk("Could not insert product: ${productDBCreate.name}")
@@ -76,14 +74,18 @@ class ProductStorageVertx(private val client: SqlClient) : ProductStorage, ItemI
             }
         }
 
-    override suspend fun addProductToStore(productToStoreTuple: Tuple): UpsertResult<String> =
+    override suspend fun addProductToStore(productToStoreDBCreate: ProductToStoreDBCreate): UpsertResult<String> =
         fetchRow(
             client = client,
             query = """
                 INSERT INTO public.products_stores (product_id, store_id, updated_at, expired_at, quantity)
                 VALUES ($1, $2, $3, $4, $5) RETURNING *
             """.trimIndent(),
-            args = productToStoreTuple
+            args = Tuple.of(
+                productToStoreDBCreate.productId, productToStoreDBCreate.storeId,
+                productToStoreDBCreate.startOffsetDate, productToStoreDBCreate.endOffsetDate,
+                productToStoreDBCreate.quantity
+            )
         ).let { row ->
             when (row) {
                 null -> UpsertResult.NotOk("Failed to insert in entry for addStoreToProduct")
@@ -91,7 +93,7 @@ class ProductStorageVertx(private val client: SqlClient) : ProductStorage, ItemI
             }
         }
 
-    override suspend fun updateProductToStore(updateProductToStoreTuple: Tuple): UpsertResult<String> =
+    override suspend fun updateProductToStore(productToStoreDBUpdate: ProductToStoreDBUpdate): UpsertResult<String> =
         fetchRow(
             client = client,
             query = """
@@ -99,7 +101,10 @@ class ProductStorageVertx(private val client: SqlClient) : ProductStorage, ItemI
                  WHERE product_id = $1
                  RETURNING *
             """.trimIndent(),
-            args = updateProductToStoreTuple
+            args = Tuple.of(
+                productToStoreDBUpdate.productId, productToStoreDBUpdate.startOffsetDate,
+                productToStoreDBUpdate.endOffsetDate, productToStoreDBUpdate.quantity
+            )
         ).let { row ->
             when (row) {
                 null -> UpsertResult.NotOk("Could not update product to store timestamps..")
