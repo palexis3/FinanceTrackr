@@ -19,11 +19,11 @@ class ReceiptAnalyticsService(
                 request.category
             )
 
-            val categoryItem = receiptStorage.getCategorySum(dbRequest)
+            val storeCategorySum = receiptStorage.getCategorySum(dbRequest)
             val readableDateRange = TimeDateConverter.getReadableDateRange(
                 offsetDateRange.startOffsetDate,
                 offsetDateRange.endOffsetDate
             )
-            ReceiptAnalyticsCategoryResponse(readableDateRange.startDate, readableDateRange.endDate, categoryItem.items)
+            ReceiptAnalyticsCategoryResponse(readableDateRange.startDate, readableDateRange.endDate, storeCategorySum.items)
         }
 }

@@ -20,5 +20,5 @@ interface ReceiptStorage {
     suspend fun get(id: UUID): Receipt?
     suspend fun getAll(): Page<Receipt>?
     suspend fun create(newReceipt: ReceiptDBCreate): UpsertResult<Receipt>
-    suspend fun getCategorySum(categoryDBRequest: ReceiptAnalyticsCategoryDBRequest): Page<CategoryItem>
+    suspend fun getCategorySum(categoryDBRequest: ReceiptAnalyticsCategoryDBRequest): Page<StoreCategorySum>
 }

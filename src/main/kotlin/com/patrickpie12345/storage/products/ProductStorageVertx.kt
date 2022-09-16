@@ -1,5 +1,6 @@
 package com.patrickpie12345.storage.products
 
+import com.patrickpie12345.helper.NumberConverter
 import com.patrickpie12345.models.Page
 import com.patrickpie12345.models.product.*
 import com.patrickpie12345.storage.UpsertResult
@@ -18,6 +19,17 @@ class ProductStorageVertx(private val client: SqlClient) : ProductStorage, ItemI
             query = "SELECT * FROM public.products WHERE id = $1",
             args = Tuple.of(id)
         )?.toProduct()
+
+    override suspend fun get(productCategory: String): Page<Product>? =
+        fetchRowSet(
+            client = client,
+            query = "SELECT * FROM public.products WHERE product_category = $1",
+            args = Tuple.of(productCategory)
+        )?.let { rows ->
+            val total = rows.size()
+            val items = if (rows.any()) rows.map { it.toProduct() } else listOf()
+            Page(items, total)
+        }
 
     override suspend fun getAll(): Page<Product>? =
         fetchRowSet(
@@ -135,4 +147,35 @@ class ProductStorageVertx(private val client: SqlClient) : ProductStorage, ItemI
                 else -> UpsertResult.Ok("Successfully updated product id: $productId with image id: $imageId")
             }
         }
+
+    override suspend fun getCategorySum(productCategoryRequest: ProductCategoryDBAnalyticsRequest): Page<ProductCategorySum> =
+        fetchRowSet(
+            client = client,
+            query = """
+                SELECT COALESCE(SUM(pro.price), 0) AS total, pro.product_category
+                FROM public.products AS pro LEFT JOIN public.product_categories AS cat
+                    ON pro.product_category = cat.name
+                        WHERE cat.name IN (
+                            SELECT name from public.product_categories WHERE path @ $3
+                        )
+                    AND 
+                    pro.created_at::date >= $1::date AND pro.created_at::date <= $2::date
+                GROUP BY pro.product_category
+            """.trimIndent(),
+            args = Tuple.of(productCategoryRequest.startDate, productCategoryRequest.endDate, productCategoryRequest.category?.canonicalName)
+        )?.let { rows ->
+            val size = rows.size()
+            val items = mutableListOf<ProductCategorySum>()
+            for (row in rows) {
+                items += ProductCategorySum(
+                    productCategory = row.getString("product_category"),
+                    total = NumberConverter.floatToDollarConversion(row.getFloat("total"))
+                )
+            }
+            Page(items, size)
+        } ?: Page(listOf(), 0)
+
+    override suspend fun getStoreSum(productStoreRequest: ProductStoresDBAnalyticsRequest): Page<ProductStoreSum> {
+        TODO("Not yet implemented")
+    }
 }

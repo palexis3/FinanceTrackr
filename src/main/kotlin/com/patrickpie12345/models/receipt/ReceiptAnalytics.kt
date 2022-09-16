@@ -18,10 +18,10 @@ data class ReceiptAnalyticsCategoryDBRequest(
 data class ReceiptAnalyticsCategoryResponse(
     val startDate: String,
     val endDate: String,
-    val categories: List<CategoryItem>
+    val categories: List<StoreCategorySum>
 )
 
-data class CategoryItem(
+data class StoreCategorySum(
     val category: StoreCategory,
     val total: Float
 )

@@ -24,7 +24,7 @@ abstract class ItemService(private val itemImageStorage: ItemImageStorage) : Koi
                     itemId = UUID.fromString(itemId),
                     imageId = imageIdUpsertResult.result
                 )
-                else -> UpsertResult.NotOk("Error inserting image for receipt: $itemId")
+                else -> UpsertResult.NotOk("Error inserting image onto our servers...")
             }
         }
 }

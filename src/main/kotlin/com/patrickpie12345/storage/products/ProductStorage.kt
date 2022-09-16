@@ -18,6 +18,7 @@ fun Row.toProduct() = Product(
 
 interface ProductStorage {
     suspend fun get(id: UUID): Product?
+    suspend fun get(productCategory: String): Page<Product>?
     suspend fun getAll(): Page<Product>?
     suspend fun delete(id: UUID): UpsertResult<String>
     suspend fun create(productDBCreate: ProductDBCreate): UpsertResult<Product>
@@ -25,4 +26,6 @@ interface ProductStorage {
     suspend fun addProductToStore(productToStoreDBCreate: ProductToStoreDBCreate): UpsertResult<String>
     suspend fun updateProductToStore(productToStoreDBUpdate: ProductToStoreDBUpdate): UpsertResult<String>
     suspend fun deleteProductToStores(productId: UUID): UpsertResult<String>
+    suspend fun getCategorySum(productCategoryRequest: ProductCategoryDBAnalyticsRequest): Page<ProductCategorySum>
+    suspend fun getStoreSum(productStoreRequest: ProductStoresDBAnalyticsRequest): Page<ProductStoreSum>
 }
