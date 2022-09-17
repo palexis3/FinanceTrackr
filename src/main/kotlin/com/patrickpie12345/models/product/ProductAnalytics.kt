@@ -3,6 +3,7 @@ package com.patrickpie12345.models.product
 import com.patrickpie12345.helper.TimeToSearch
 import com.patrickpie12345.models.store.Store
 import java.time.OffsetDateTime
+import java.util.*
 
 data class ProductCategoryAnalyticsRequest(
     val timeToSearch: TimeToSearch? = null,
@@ -34,7 +35,7 @@ data class ProductCategorySum(
 
 data class ProductStoresAnalyticsRequest(
     val timeToSearch: TimeToSearch? = null,
-    val store: Store? = null
+    val store: String? = null
 )
 
 data class ProductStoresDBAnalyticsRequest(
@@ -56,6 +57,6 @@ data class StoreAndProducts(
 )
 
 data class ProductStoreSum(
-    val store: Store,
+    val storeId: UUID,
     val total: Float
 )

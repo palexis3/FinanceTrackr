@@ -174,7 +174,32 @@ class ProductStorageVertx(private val client: SqlClient) : ProductStorage, ItemI
             Page(items, size)
         } ?: Page(listOf(), 0)
 
-    override suspend fun getStoreSum(productStoreRequest: ProductStoresDBAnalyticsRequest): Page<ProductStoreSum> {
-        TODO("Not yet implemented")
-    }
+    override suspend fun getStoreSum(productStoreRequest: ProductStoresDBAnalyticsRequest): Page<ProductStoreSum> =
+        fetchRowSet(
+            client = client,
+            query = """
+                SELECT COALESCE(SUM(pro.price, 0)) AS total, sto.id as store_id
+                FROM public.products AS pro
+                    INNER JOIN public.products_stores AS pro_sto
+                      ON pro.id = pro_sto.product_id
+                    INNER JOIN public.stores AS sto
+                      ON pro_sto.store_id = sto.id
+                        WHERE sto.id IN (
+                            SELECT id FROM public.stores WHERE name = $3 OR $3 IS NULL
+                        )
+                    AND 
+                        pro_sto.updated_at::date >= $1::date AND pro_sto.updated_at::date <= $2::date
+            """.trimIndent(),
+            args = Tuple.of(productStoreRequest.startDate, productStoreRequest.endDate, productStoreRequest.store)
+        )?.let { rows ->
+            val size = rows.size()
+            val items = mutableListOf<ProductStoreSum>()
+            for (row in rows) {
+                items += ProductStoreSum(
+                    storeId = row.getUUID("store_id"),
+                    total = row.getFloat("total")
+                )
+            }
+            Page(items, size)
+        } ?: Page(listOf(), 0)
 }

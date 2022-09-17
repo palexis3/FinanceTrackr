@@ -1,12 +1,12 @@
 package com.patrickpie12345.storage.stores
 
 import com.patrickpie12345.models.store.Store
-import com.patrickpie12345.models.store.StoreCategory
 import com.patrickpie12345.models.store.StoreCreate
 import com.patrickpie12345.storage.UpsertResult
 import com.patrickpie12345.storage.VertxStorageExtension.fetchRow
 import io.vertx.sqlclient.SqlClient
 import io.vertx.sqlclient.Tuple
+import java.util.*
 
 class StoresStorageVertx(private val client: SqlClient) : StoresStorage {
 
@@ -34,13 +34,14 @@ class StoresStorageVertx(private val client: SqlClient) : StoresStorage {
         ).let { row ->
             when (row) {
                 null -> UpsertResult.NotOk("Could not save store: ${store.name}")
-                else -> UpsertResult.Ok(
-                    Store(
-                        id = row.getUUID("id"),
-                        name = row.getString("name"),
-                        category = row.get(StoreCategory::class.java, "store_category")
-                    )
-                )
+                else -> UpsertResult.Ok(row.toStore())
             }
         }
+
+    override suspend fun get(id: UUID): Store? =
+        fetchRow(
+            client = client,
+            query = "SELECT * FROM public.stores WHERE id = $1",
+            args = Tuple.of(id)
+        )?.toStore()
 }
