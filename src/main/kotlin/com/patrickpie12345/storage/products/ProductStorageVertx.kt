@@ -1,6 +1,5 @@
 package com.patrickpie12345.storage.products
 
-import com.patrickpie12345.helper.NumberConverter
 import com.patrickpie12345.models.Page
 import com.patrickpie12345.models.product.*
 import com.patrickpie12345.storage.UpsertResult
@@ -156,20 +155,20 @@ class ProductStorageVertx(private val client: SqlClient) : ProductStorage, ItemI
                 FROM public.products AS pro LEFT JOIN public.product_categories AS cat
                     ON pro.product_category = cat.name
                         WHERE cat.name IN (
-                            SELECT name from public.product_categories WHERE path @ $3
+                            SELECT name FROM public.product_categories WHERE path @ $3 OR $3 IS NULL
                         )
                     AND 
                     pro.created_at::date >= $1::date AND pro.created_at::date <= $2::date
                 GROUP BY pro.product_category
             """.trimIndent(),
-            args = Tuple.of(productCategoryRequest.startDate, productCategoryRequest.endDate, productCategoryRequest.category?.canonicalName)
+            args = Tuple.of(productCategoryRequest.startDate, productCategoryRequest.endDate, productCategoryRequest.category)
         )?.let { rows ->
             val size = rows.size()
             val items = mutableListOf<ProductCategorySum>()
             for (row in rows) {
                 items += ProductCategorySum(
                     productCategory = row.getString("product_category"),
-                    total = NumberConverter.floatToDollarConversion(row.getFloat("total"))
+                    total = row.getFloat("total")
                 )
             }
             Page(items, size)

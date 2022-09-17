@@ -1,5 +1,6 @@
 package com.patrickpie12345.storage.products
 
+import com.patrickpie12345.helper.NumberConverter
 import com.patrickpie12345.models.Page
 import com.patrickpie12345.models.product.*
 import com.patrickpie12345.storage.UpsertResult
@@ -10,7 +11,7 @@ import java.util.*
 fun Row.toProduct() = Product(
     id = this.getUUID("id"),
     name = this.getString("name"),
-    price = this.getFloat("price"),
+    price = NumberConverter.floatToDollarConversion(this.getFloat("price")),
     imageId = this.getUUID("image_id"),
     createdAt = this.getLocalDateTime("created_at").toInstant(ZoneOffset.UTC),
     productCategory = this.getString("product_category"),

@@ -23,5 +23,5 @@ data class ReceiptAnalyticsCategoryResponse(
 
 data class StoreCategorySum(
     val category: StoreCategory,
-    val total: Float
+    val total: String
 )

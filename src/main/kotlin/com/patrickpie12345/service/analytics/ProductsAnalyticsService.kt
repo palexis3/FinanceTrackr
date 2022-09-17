@@ -1,5 +1,6 @@
 package com.patrickpie12345.service.analytics
 
+import com.patrickpie12345.helper.NumberConverter
 import com.patrickpie12345.helper.TimeDateConverter
 import com.patrickpie12345.models.product.*
 import com.patrickpie12345.storage.products.ProductStorageVertx
@@ -16,7 +17,7 @@ class ProductsAnalyticsService(
             val dbRequest = ProductCategoryDBAnalyticsRequest(
                 offsetDateRange.startOffsetDate,
                 offsetDateRange.endOffsetDate,
-                analyticsRequest.category
+                analyticsRequest.category?.canonicalName
             )
             val readableDateRange = TimeDateConverter.getReadableDateRange(
                 offsetDateRange.startOffsetDate,
@@ -25,12 +26,12 @@ class ProductsAnalyticsService(
 
             val categoryAndProductsList = mutableListOf<CategoryAndProducts>()
             val productCategorySum = productStorage.getCategorySum(dbRequest)
-
             productCategorySum.items.forEach { categorySum ->
                 categoryAndProductsList.add(
                     withContext(Dispatchers.IO) {
                         val products = productStorage.get(categorySum.productCategory)?.items ?: listOf()
-                        CategoryAndProducts(categorySum.productCategory, products, categorySum.total)
+                        val total = NumberConverter.floatToDollarConversion(categorySum.total)
+                        CategoryAndProducts(categorySum.productCategory, products, total)
                     }
                 )
             }

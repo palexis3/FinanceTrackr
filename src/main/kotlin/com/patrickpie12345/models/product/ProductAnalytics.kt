@@ -12,7 +12,7 @@ data class ProductCategoryAnalyticsRequest(
 data class ProductCategoryDBAnalyticsRequest(
     val startDate: OffsetDateTime,
     val endDate: OffsetDateTime,
-    val category: ProductCategory?
+    val category: String?
 )
 
 data class ProductCategoryAnalyticsResponse(
@@ -24,7 +24,7 @@ data class ProductCategoryAnalyticsResponse(
 data class CategoryAndProducts(
     val productCategory: String,
     val products: List<Product>,
-    val total: Float
+    val total: String
 )
 
 data class ProductCategorySum(

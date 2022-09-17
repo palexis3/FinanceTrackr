@@ -46,7 +46,7 @@ enum class ProductCategory(val canonicalName: String) {
 data class Product(
     val id: UUID,
     val name: String,
-    val price: Float,
+    val price: String,
     val imageId: UUID? = null,
     val createdAt: Instant,
     val productCategory: String
