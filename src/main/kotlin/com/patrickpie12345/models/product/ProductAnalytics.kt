@@ -40,7 +40,7 @@ data class ProductStoresAnalyticsRequest(
 data class ProductStoresDBAnalyticsRequest(
     val startDate: OffsetDateTime,
     val endDate: OffsetDateTime,
-    val store: Store?
+    val store: String?
 )
 
 data class ProductStoresAnalyticsResponse(
@@ -52,7 +52,7 @@ data class ProductStoresAnalyticsResponse(
 data class StoreAndProducts(
     val store: Store,
     val products: List<Product>,
-    val total: Float
+    val total: String
 )
 
 data class ProductStoreSum(
