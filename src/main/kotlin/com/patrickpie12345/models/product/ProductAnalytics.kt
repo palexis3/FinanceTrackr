@@ -51,8 +51,8 @@ data class ProductStoresAnalyticsResponse(
 )
 
 data class StoreAndProducts(
-    val store: Store,
-    val products: List<Product>,
+    val store: Store?,
+    val products: List<Product>?,
     val total: String
 )
 
