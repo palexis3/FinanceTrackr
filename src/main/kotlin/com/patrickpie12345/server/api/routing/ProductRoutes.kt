@@ -13,12 +13,11 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import org.koin.ktor.ext.getKoin
 
-fun Route.productRouting() {
-
-    val productService by getKoin().inject<ProductService>()
-    val analyticsService by getKoin().inject<ProductsAnalyticsService>()
+fun Route.productRouting(
+    productService: ProductService,
+    analyticsService: ProductsAnalyticsService
+) {
 
     route("/product") {
         get {
