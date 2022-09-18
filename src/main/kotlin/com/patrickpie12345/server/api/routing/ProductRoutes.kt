@@ -1,7 +1,7 @@
 package com.patrickpie12345.server.api.routing
 
+import ProductCategoryAnalyticsRequest
 import com.patrickpie12345.models.product.Product
-import com.patrickpie12345.models.product.ProductCategoryAnalyticsRequest
 import com.patrickpie12345.models.product.ProductCreate
 import com.patrickpie12345.models.product.ProductUpdate
 import com.patrickpie12345.service.ProductService

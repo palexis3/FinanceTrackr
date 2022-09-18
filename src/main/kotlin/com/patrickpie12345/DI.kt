@@ -49,6 +49,6 @@ object DI {
         single { ProductService(get(), get()) }
 
         single { ReceiptAnalyticsService(get()) }
-        single { ProductsAnalyticsService(get()) }
+        single { ProductsAnalyticsService(get(), get()) }
     }
 }

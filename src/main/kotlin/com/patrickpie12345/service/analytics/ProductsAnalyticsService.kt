@@ -1,5 +1,13 @@
 package com.patrickpie12345.service.analytics
 
+import CategoryAndProducts
+import ProductCategoryAnalyticsRequest
+import ProductCategoryAnalyticsResponse
+import ProductCategoryDBAnalyticsRequest
+import ProductStoresAnalyticsRequest
+import ProductStoresAnalyticsResponse
+import ProductStoresDBAnalyticsRequest
+import StoreAndProducts
 import com.patrickpie12345.helper.NumberConverter
 import com.patrickpie12345.helper.TimeDateConverter
 import com.patrickpie12345.models.product.*
@@ -66,7 +74,6 @@ class ProductsAnalyticsService(
                         StoreAndProducts(store, products, total)
                     }
                 )
-
             }
             ProductStoresAnalyticsResponse(readableDateRange.startDate, readableDateRange.endDate, storesAndProducts)
         }

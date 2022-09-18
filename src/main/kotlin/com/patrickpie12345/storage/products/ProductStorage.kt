@@ -1,5 +1,9 @@
 package com.patrickpie12345.storage.products
 
+import ProductCategoryDBAnalyticsRequest
+import ProductCategorySum
+import ProductStoreSum
+import ProductStoresDBAnalyticsRequest
 import com.patrickpie12345.helper.NumberConverter
 import com.patrickpie12345.models.Page
 import com.patrickpie12345.models.product.*
