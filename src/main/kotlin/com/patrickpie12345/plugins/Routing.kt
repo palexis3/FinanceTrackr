@@ -1,6 +1,6 @@
 package com.patrickpie12345.plugins
 
-import com.patrickpie12345.server.api.routing.imageRoutes
+import com.patrickpie12345.server.api.routing.imageRouting
 import com.patrickpie12345.server.api.routing.productRouting
 import com.patrickpie12345.server.api.routing.receiptRouting
 import com.patrickpie12345.service.ProductService
@@ -29,7 +29,7 @@ fun Application.configureRouting() {
         val receiptAnalyticsService by getKoin().inject<ReceiptAnalyticsService>()
         receiptRouting(receiptService, receiptAnalyticsService)
 
-        imageRoutes(receiptService, productService)
+        imageRouting(receiptService, productService)
 
         /**
          *  TODO: Patrick get back to implementing GraphQL Routing
