@@ -1,9 +1,12 @@
 package com.patrickpie12345.server.api.routing
 
+import ProductCategoryAnalyticsRequest
+import ProductStoresAnalyticsRequest
 import com.patrickpie12345.models.product.Product
 import com.patrickpie12345.models.product.ProductCreate
 import com.patrickpie12345.models.product.ProductUpdate
 import com.patrickpie12345.service.ProductService
+import com.patrickpie12345.service.analytics.ProductsAnalyticsService
 import com.patrickpie12345.storage.UpsertResult
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -15,6 +18,7 @@ import org.koin.ktor.ext.getKoin
 fun Route.productRouting() {
 
     val productService by getKoin().inject<ProductService>()
+    val analyticsService by getKoin().inject<ProductsAnalyticsService>()
 
     route("/product") {
         get {
@@ -65,6 +69,22 @@ fun Route.productRouting() {
             when (val productDeleteResult = productService.delete(id)) {
                 is UpsertResult.Ok -> call.respondText(productDeleteResult.result, status = HttpStatusCode.OK)
                 else -> call.respondText("Could not delete product..", status = HttpStatusCode.InternalServerError)
+            }
+        }
+
+        route("/analytics") {
+            get("/category") {
+                val request = call.receive<ProductCategoryAnalyticsRequest>()
+                val response = analyticsService.getCategorySum(request)
+
+                call.respond(response)
+            }
+
+            get("/store") {
+                val request = call.receive<ProductStoresAnalyticsRequest>()
+                val response = analyticsService.getStoreSum(request)
+
+                call.respond(response)
             }
         }
     }

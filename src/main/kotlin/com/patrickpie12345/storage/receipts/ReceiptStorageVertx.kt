@@ -70,7 +70,7 @@ class ReceiptStorageVertx(private val client: SqlClient) : ReceiptStorage, ItemI
      * to select the rows that have the same store_id from receipts with the id of the stores table that
      * has the desired category requested (if there isn't one, then all are selected)
      */
-    override suspend fun getCategorySum(categoryDBRequest: ReceiptAnalyticsCategoryDBRequest): Page<CategoryItem> =
+    override suspend fun getCategorySum(categoryDBRequest: ReceiptAnalyticsCategoryDBRequest): Page<StoreCategorySum> =
         fetchRowSet(
             client = client,
             query = """
@@ -84,9 +84,9 @@ class ReceiptStorageVertx(private val client: SqlClient) : ReceiptStorage, ItemI
             args = Tuple.of(categoryDBRequest.category, categoryDBRequest.beginningDate, categoryDBRequest.endingDate)
         )?.let { rows ->
             val size = rows.size()
-            val items = mutableListOf<CategoryItem>()
+            val items = mutableListOf<StoreCategorySum>()
             for (row in rows) {
-                items += CategoryItem(
+                items += StoreCategorySum(
                     category = row.get(StoreCategory::class.java, "category"),
                     total = NumberConverter.floatToDollarConversion(row.getFloat("total"))
                 )

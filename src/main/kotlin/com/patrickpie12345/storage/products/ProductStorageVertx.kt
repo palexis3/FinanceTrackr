@@ -1,9 +1,11 @@
 package com.patrickpie12345.storage.products
 
+import ProductCategoryDBAnalyticsRequest
+import ProductCategorySum
+import ProductStoreSum
+import ProductStoresDBAnalyticsRequest
 import com.patrickpie12345.models.Page
-import com.patrickpie12345.models.product.Product
-import com.patrickpie12345.models.product.ProductDBCreate
-import com.patrickpie12345.models.product.ProductUpdate
+import com.patrickpie12345.models.product.*
 import com.patrickpie12345.storage.UpsertResult
 import com.patrickpie12345.storage.VertxStorageExtension.fetchRow
 import com.patrickpie12345.storage.VertxStorageExtension.fetchRowSet
@@ -20,6 +22,34 @@ class ProductStorageVertx(private val client: SqlClient) : ProductStorage, ItemI
             query = "SELECT * FROM public.products WHERE id = $1",
             args = Tuple.of(id)
         )?.toProduct()
+
+    override suspend fun getByCategory(productCategory: String): Page<Product> =
+        fetchRowSet(
+            client = client,
+            query = "SELECT * FROM public.products WHERE product_category = $1",
+            args = Tuple.of(productCategory)
+        )?.let { rows ->
+            val total = rows.size()
+            val items = if (rows.any()) rows.map { it.toProduct() } else listOf()
+            Page(items, total)
+        } ?: Page(listOf(), 0)
+
+    override suspend fun getByStore(storeId: UUID): Page<Product> =
+        fetchRowSet(
+            client = client,
+            query = """
+                SELECT * FROM public.products AS pro LEFT JOIN public.products_stores AS pro_sto
+                ON pro.id = pro_sto.product_id
+                WHERE pro_sto.store_id IN (
+                    SELECT store_id FROM public.products_stores WHERE store_id = $1
+                )
+            """.trimIndent(),
+            args = Tuple.of(storeId)
+        )?.let { rows ->
+            val total = rows.size()
+            val items = if (rows.any()) rows.map { it.toProduct() } else listOf()
+            Page(items, total)
+        } ?: Page(listOf(), 0)
 
     override suspend fun getAll(): Page<Product>? =
         fetchRowSet(
@@ -48,10 +78,10 @@ class ProductStorageVertx(private val client: SqlClient) : ProductStorage, ItemI
         fetchRow(
             client = client,
             query = """
-                INSERT INTO public.products (name, price) VALUES ($1, $2)
+                INSERT INTO public.products (name, price, product_category) VALUES ($1, $2, $3)
                 RETURNING *
             """.trimIndent(),
-            args = Tuple.of(productDBCreate.name, productDBCreate.price)
+            args = Tuple.of(productDBCreate.name, productDBCreate.price, productDBCreate.category.canonicalName)
         ).let { row ->
             when (row) {
                 null -> UpsertResult.NotOk("Could not insert product: ${productDBCreate.name}")
@@ -76,14 +106,18 @@ class ProductStorageVertx(private val client: SqlClient) : ProductStorage, ItemI
             }
         }
 
-    override suspend fun addProductToStore(productToStoreTuple: Tuple): UpsertResult<String> =
+    override suspend fun addProductToStore(productToStoreDBCreate: ProductToStoreDBCreate): UpsertResult<String> =
         fetchRow(
             client = client,
             query = """
                 INSERT INTO public.products_stores (product_id, store_id, updated_at, expired_at, quantity)
                 VALUES ($1, $2, $3, $4, $5) RETURNING *
             """.trimIndent(),
-            args = productToStoreTuple
+            args = Tuple.of(
+                productToStoreDBCreate.productId, productToStoreDBCreate.storeId,
+                productToStoreDBCreate.startOffsetDate, productToStoreDBCreate.endOffsetDate,
+                productToStoreDBCreate.quantity
+            )
         ).let { row ->
             when (row) {
                 null -> UpsertResult.NotOk("Failed to insert in entry for addStoreToProduct")
@@ -91,7 +125,7 @@ class ProductStorageVertx(private val client: SqlClient) : ProductStorage, ItemI
             }
         }
 
-    override suspend fun updateProductToStore(updateProductToStoreTuple: Tuple): UpsertResult<String> =
+    override suspend fun updateProductToStore(productToStoreDBUpdate: ProductToStoreDBUpdate): UpsertResult<String> =
         fetchRow(
             client = client,
             query = """
@@ -99,7 +133,10 @@ class ProductStorageVertx(private val client: SqlClient) : ProductStorage, ItemI
                  WHERE product_id = $1
                  RETURNING *
             """.trimIndent(),
-            args = updateProductToStoreTuple
+            args = Tuple.of(
+                productToStoreDBUpdate.productId, productToStoreDBUpdate.startOffsetDate,
+                productToStoreDBUpdate.endOffsetDate, productToStoreDBUpdate.quantity
+            )
         ).let { row ->
             when (row) {
                 null -> UpsertResult.NotOk("Could not update product to store timestamps..")
@@ -130,4 +167,60 @@ class ProductStorageVertx(private val client: SqlClient) : ProductStorage, ItemI
                 else -> UpsertResult.Ok("Successfully updated product id: $productId with image id: $imageId")
             }
         }
+
+    override suspend fun getCategorySum(productCategoryRequest: ProductCategoryDBAnalyticsRequest): Page<ProductCategorySum> =
+        fetchRowSet(
+            client = client,
+            query = """
+                SELECT COALESCE(SUM(pro.price), 0) AS total, pro.product_category
+                FROM public.products AS pro LEFT JOIN public.product_categories AS cat
+                    ON pro.product_category = cat.name
+                        WHERE cat.name IN (
+                            SELECT name FROM public.product_categories WHERE path @ $3 OR $3 IS NULL
+                        )
+                    AND 
+                    pro.created_at::date >= $1::date AND pro.created_at::date <= $2::date
+                GROUP BY pro.product_category
+            """.trimIndent(),
+            args = Tuple.of(productCategoryRequest.startDate, productCategoryRequest.endDate, productCategoryRequest.category)
+        )?.let { rows ->
+            val size = rows.size()
+            val items = mutableListOf<ProductCategorySum>()
+            for (row in rows) {
+                items += ProductCategorySum(
+                    productCategory = row.getString("product_category"),
+                    total = row.getFloat("total")
+                )
+            }
+            Page(items, size)
+        } ?: Page(listOf(), 0)
+
+    override suspend fun getStoreSum(productStoreRequest: ProductStoresDBAnalyticsRequest): Page<ProductStoreSum> =
+        fetchRowSet(
+            client = client,
+            query = """
+                SELECT COALESCE(SUM(pro.price), 0) AS total, sto.id as store_id
+                FROM public.products AS pro
+                    INNER JOIN public.products_stores AS pro_sto
+                      ON pro.id = pro_sto.product_id
+                        AND pro_sto.updated_at::date >= $1::date AND pro_sto.updated_at::date <= $2::date
+                    INNER JOIN public.stores AS sto
+                      ON pro_sto.store_id = sto.id
+                        WHERE sto.id IN (
+                            SELECT id FROM public.stores WHERE name = $3 OR $3 IS NULL
+                        )
+                GROUP BY sto.id
+            """.trimIndent(),
+            args = Tuple.of(productStoreRequest.startDate, productStoreRequest.endDate, productStoreRequest.store)
+        )?.let { rows ->
+            val size = rows.size()
+            val items = mutableListOf<ProductStoreSum>()
+            for (row in rows) {
+                items += ProductStoreSum(
+                    storeId = row.getUUID("store_id"),
+                    total = row.getFloat("total")
+                )
+            }
+            Page(items, size)
+        } ?: Page(listOf(), 0)
 }
