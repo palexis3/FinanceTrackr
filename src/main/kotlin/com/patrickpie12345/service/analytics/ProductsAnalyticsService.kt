@@ -10,7 +10,6 @@ import ProductStoresDBAnalyticsRequest
 import StoreAndProducts
 import com.patrickpie12345.helper.NumberConverter
 import com.patrickpie12345.helper.TimeDateConverter
-import com.patrickpie12345.models.product.*
 import com.patrickpie12345.storage.products.ProductStorageVertx
 import com.patrickpie12345.storage.stores.StoresStorageVertx
 import kotlinx.coroutines.Dispatchers
@@ -39,7 +38,7 @@ class ProductsAnalyticsService(
             result.items.forEach { productCategorySum ->
                 categoryAndProductsList.add(
                     withContext(Dispatchers.IO) {
-                        val products = productStorage.get(productCategorySum.productCategory)?.items ?: listOf()
+                        val products = productStorage.getByCategory(productCategorySum.productCategory).items
                         val total = NumberConverter.floatToDollarConversion(productCategorySum.total)
                         CategoryAndProducts(productCategorySum.productCategory, products, total)
                     }
@@ -69,8 +68,7 @@ class ProductsAnalyticsService(
                     withContext(Dispatchers.IO) {
                         val store = storeStorage.get(productStoreSum.storeId)
                         val total = NumberConverter.floatToDollarConversion(productStoreSum.total)
-                        // TODO: Get list of products associated with the store id
-                        val products = productStorage.getAll()?.items
+                        val products = productStorage.getByStore(productStoreSum.storeId).items
                         StoreAndProducts(store, products, total)
                     }
                 )

@@ -23,7 +23,8 @@ fun Row.toProduct() = Product(
 
 interface ProductStorage {
     suspend fun get(id: UUID): Product?
-    suspend fun get(productCategory: String): Page<Product>?
+    suspend fun getByCategory(productCategory: String): Page<Product>
+    suspend fun getByStore(storeId: UUID): Page<Product>
     suspend fun getAll(): Page<Product>?
     suspend fun delete(id: UUID): UpsertResult<String>
     suspend fun create(productDBCreate: ProductDBCreate): UpsertResult<Product>

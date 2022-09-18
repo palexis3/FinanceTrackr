@@ -23,7 +23,7 @@ class ProductStorageVertx(private val client: SqlClient) : ProductStorage, ItemI
             args = Tuple.of(id)
         )?.toProduct()
 
-    override suspend fun get(productCategory: String): Page<Product>? =
+    override suspend fun getByCategory(productCategory: String): Page<Product> =
         fetchRowSet(
             client = client,
             query = "SELECT * FROM public.products WHERE product_category = $1",
@@ -32,7 +32,24 @@ class ProductStorageVertx(private val client: SqlClient) : ProductStorage, ItemI
             val total = rows.size()
             val items = if (rows.any()) rows.map { it.toProduct() } else listOf()
             Page(items, total)
-        }
+        } ?: Page(listOf(), 0)
+
+    override suspend fun getByStore(storeId: UUID): Page<Product> =
+        fetchRowSet(
+            client = client,
+            query = """
+                SELECT * FROM public.products AS pro LEFT JOIN public.products_stores AS pro_sto
+                ON pro.id = pro_sto.product_id
+                WHERE pro_sto.store_id IN (
+                    SELECT store_id FROM public.products_stores WHERE store_id = $1
+                )
+            """.trimIndent(),
+            args = Tuple.of(storeId)
+        )?.let { rows ->
+            val total = rows.size()
+            val items = if (rows.any()) rows.map { it.toProduct() } else listOf()
+            Page(items, total)
+        } ?: Page(listOf(), 0)
 
     override suspend fun getAll(): Page<Product>? =
         fetchRowSet(
@@ -182,17 +199,17 @@ class ProductStorageVertx(private val client: SqlClient) : ProductStorage, ItemI
         fetchRowSet(
             client = client,
             query = """
-                SELECT COALESCE(SUM(pro.price, 0)) AS total, sto.id as store_id
+                SELECT COALESCE(SUM(pro.price), 0) AS total, sto.id as store_id
                 FROM public.products AS pro
                     INNER JOIN public.products_stores AS pro_sto
                       ON pro.id = pro_sto.product_id
+                        AND pro_sto.updated_at::date >= $1::date AND pro_sto.updated_at::date <= $2::date
                     INNER JOIN public.stores AS sto
                       ON pro_sto.store_id = sto.id
                         WHERE sto.id IN (
                             SELECT id FROM public.stores WHERE name = $3 OR $3 IS NULL
                         )
-                    AND 
-                        pro_sto.updated_at::date >= $1::date AND pro_sto.updated_at::date <= $2::date
+                GROUP BY sto.id
             """.trimIndent(),
             args = Tuple.of(productStoreRequest.startDate, productStoreRequest.endDate, productStoreRequest.store)
         )?.let { rows ->

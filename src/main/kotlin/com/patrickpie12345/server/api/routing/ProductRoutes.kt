@@ -1,6 +1,7 @@
 package com.patrickpie12345.server.api.routing
 
 import ProductCategoryAnalyticsRequest
+import ProductStoresAnalyticsRequest
 import com.patrickpie12345.models.product.Product
 import com.patrickpie12345.models.product.ProductCreate
 import com.patrickpie12345.models.product.ProductUpdate
@@ -71,11 +72,20 @@ fun Route.productRouting() {
             }
         }
 
-        get("/analytics/category") {
-            val request = call.receive<ProductCategoryAnalyticsRequest>()
-            val categoryResponse = analyticsService.getCategorySum(request)
+        route("/analytics") {
+            get("/category") {
+                val request = call.receive<ProductCategoryAnalyticsRequest>()
+                val response = analyticsService.getCategorySum(request)
 
-            call.respond(categoryResponse)
+                call.respond(response)
+            }
+
+            get("/store") {
+                val request = call.receive<ProductStoresAnalyticsRequest>()
+                val response = analyticsService.getStoreSum(request)
+
+                call.respond(response)
+            }
         }
     }
 }
