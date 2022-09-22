@@ -1,4 +1,4 @@
-FROM openjdk:11
+FROM openjdk:11 as build
 
 EXPOSE 8080:8080
 RUN mkdir /app
