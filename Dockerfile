@@ -1,8 +1,8 @@
-FROM openjdk:11 as build
+FROM openjdk:17-bullseye as builder
 
 EXPOSE 8080:8080
 RUN mkdir /app
 
-COPY ./build/libs/finance-trackr-0.0.1-all.jar /app/finance-trackr-0.0.1-all.jar
+COPY --from=builder /build/libs/finance-trackr-0.0.1-all.jar /app/
 WORKDIR /app
 ENTRYPOINT ["java","-jar","/app/finance-trackr-0.0.1-all.jar"]
