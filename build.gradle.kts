@@ -1,3 +1,5 @@
+import io.github.cdimascio.dotenv.dotenv
+
 val ktor_version: String by project
 val kotlin_version: String by project
 val logback_version: String by project
@@ -23,6 +25,11 @@ val entryPoint = "com.patrickpie12345.ApplicationKt"
 group = "com.patrickpie12345"
 version = "0.0.1"
 
+val env = dotenv { ignoreIfMissing = true }
+val jdbcDatabaseUrl: String = env["JDBC_DATABASE_URL"]
+val jdbcDatabaseUser: String = env["DATABASE_USERNAME"]
+val jdbcDatabasePassword: String = env["DATABASE_PASSWORD"]
+
 application {
     mainClass.set("com.patrickpie12345.ApplicationKt")
 
@@ -33,9 +40,9 @@ application {
 kotlin {
     tasks {
         flyway {
-            url = "jdbc:postgresql://localhost:5432/financeTrackr"
-            user = "postgres"
-            password = "postgres"
+            url = jdbcDatabaseUrl
+            user = jdbcDatabaseUser
+            password = jdbcDatabasePassword
             schemas = arrayOf("public")
             ignoreMigrationPatterns = arrayOf("*:pending")
         }
@@ -51,14 +58,11 @@ kotlin {
     }
 }
 
-// tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-//    kotlinOptions {
-//        allWarningsAsErrors = true
-//        apiVersion = "1.5"
-//        languageVersion = "1.5"
-//        jvmTarget = "11"
-//    }
-// }
+buildscript {
+    dependencies {
+        classpath("io.github.cdimascio:dotenv-kotlin:6.3.1")
+    }
+}
 
 repositories {
     mavenCentral()
