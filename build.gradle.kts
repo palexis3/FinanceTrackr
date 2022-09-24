@@ -19,13 +19,17 @@ plugins {
     id("org.flywaydb.flyway") version "9.0.2"
     id("org.jlleitschuh.gradle.ktlint") version "10.1.0"
     id("com.expediagroup.graphql") version "6.1.0"
+    id("io.ktor.plugin") version "2.1.1"
 }
 
 val entryPoint = "com.patrickpie12345.ApplicationKt"
 group = "com.patrickpie12345"
 version = "0.0.1"
 
-val env = dotenv { ignoreIfMissing = true }
+val env = dotenv {
+    directory = "./"
+    ignoreIfMissing = true
+}
 val jdbcDatabaseUrl: String = env["JDBC_DATABASE_URL"]
 val jdbcDatabaseUser: String = env["DATABASE_USERNAME"]
 val jdbcDatabasePassword: String = env["DATABASE_PASSWORD"]
