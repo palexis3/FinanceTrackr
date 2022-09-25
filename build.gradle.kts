@@ -15,7 +15,6 @@ val dotenv_version: String by project
 plugins {
     application
     kotlin("jvm") version "1.7.10"
-    id("com.github.johnrengelman.shadow") version "7.1.2"
     id("org.flywaydb.flyway") version "9.0.2"
     id("org.jlleitschuh.gradle.ktlint") version "10.1.0"
     id("com.expediagroup.graphql") version "6.1.0"
@@ -26,20 +25,17 @@ val entryPoint = "com.patrickpie12345.ApplicationKt"
 group = "com.patrickpie12345"
 version = "0.0.1"
 
-val env = dotenv {
-    directory = "./"
-    ignoreIfMissing = true
-}
-val jdbcDatabaseUrl: String = env["JDBC_DATABASE_URL"]
-val jdbcDatabaseUser: String = env["DATABASE_USERNAME"]
-val jdbcDatabasePassword: String = env["DATABASE_PASSWORD"]
-
 application {
     mainClass.set("com.patrickpie12345.ApplicationKt")
 
     val isDevelopment: Boolean = project.ext.has("development")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
+
+val env = dotenv()
+val jdbcDatabaseUrl: String = env["JDBC_DATABASE_URL"]
+val jdbcDatabaseUser: String = env["DATABASE_USERNAME"]
+val jdbcDatabasePassword: String = env["DATABASE_PASSWORD"]
 
 kotlin {
     tasks {
@@ -49,15 +45,6 @@ kotlin {
             password = jdbcDatabasePassword
             schemas = arrayOf("public")
             ignoreMigrationPatterns = arrayOf("*:pending")
-        }
-
-        shadowJar {
-            archiveBaseName.set("finance-trackr")
-            manifest {
-                attributes(
-                    "Main-Class" to entryPoint
-                )
-            }
         }
     }
 }
