@@ -175,12 +175,15 @@ class ProductStorageVertx(private val client: SqlClient) : ProductStorage, ItemI
                 SELECT COALESCE(SUM(pro.price), 0) AS total, pro.product_category
                 FROM public.products AS pro LEFT JOIN public.product_categories AS cat
                     ON pro.product_category = cat.name
-                        WHERE cat.name IN (
-                            SELECT name FROM public.product_categories WHERE path @ $3 OR $3 IS NULL
-                        )
-                    AND 
-                    pro.created_at::date >= $1::date AND pro.created_at::date <= $2::date
-                GROUP BY pro.product_category
+                       WHERE cat.name IN (
+                            SELECT name FROM public.product_categories WHERE path <@ (
+                                SELECT path FROM public.product_categories
+                                WHERE name = COALESCE($3, 'Root')
+                            )
+                    )
+                   AND
+                   pro.created_at::date >= $1::date AND pro.created_at::date <= $2::date
+                GROUP BY pro.product_category;
             """.trimIndent(),
             args = Tuple.of(productCategoryRequest.startDate, productCategoryRequest.endDate, productCategoryRequest.category)
         )?.let { rows ->

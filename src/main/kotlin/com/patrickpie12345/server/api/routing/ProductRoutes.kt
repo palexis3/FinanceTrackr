@@ -71,20 +71,18 @@ fun Route.productRouting(
             }
         }
 
-        route("/analytics") {
-            get("/category") {
-                val request = call.receive<ProductCategoryAnalyticsRequest>()
-                val response = analyticsService.getCategorySum(request)
+        get("/analytics/category") {
+            val request = call.receive<ProductCategoryAnalyticsRequest>()
+            val response = analyticsService.getCategorySum(request)
 
-                call.respond(response)
-            }
+            call.respond(response)
+        }
 
-            get("/store") {
-                val request = call.receive<ProductStoresAnalyticsRequest>()
-                val response = analyticsService.getStoreSum(request)
+        get("/analytics/store") {
+            val request = call.receive<ProductStoresAnalyticsRequest>()
+            val response = analyticsService.getStoreSum(request)
 
-                call.respond(response)
-            }
+            call.respond(response)
         }
     }
 }

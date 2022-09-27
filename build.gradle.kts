@@ -1,5 +1,3 @@
-import io.github.cdimascio.dotenv.dotenv
-
 val ktor_version: String by project
 val kotlin_version: String by project
 val logback_version: String by project
@@ -11,11 +9,11 @@ val jackson_version: String by project
 val scram_version: String by project
 val aws_sdk_java_version: String by project
 val dotenv_version: String by project
+val flyway_version: String by project
 
 plugins {
     application
     kotlin("jvm") version "1.7.10"
-    id("org.flywaydb.flyway") version "9.0.2"
     id("org.jlleitschuh.gradle.ktlint") version "10.1.0"
     id("com.expediagroup.graphql") version "6.1.0"
     id("io.ktor.plugin") version "2.1.1"
@@ -30,29 +28,6 @@ application {
 
     val isDevelopment: Boolean = project.ext.has("development")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
-}
-
-val env = dotenv()
-val jdbcDatabaseUrl: String = env["JDBC_DATABASE_URL"]
-val jdbcDatabaseUser: String = env["DATABASE_USERNAME"]
-val jdbcDatabasePassword: String = env["DATABASE_PASSWORD"]
-
-kotlin {
-    tasks {
-        flyway {
-            url = jdbcDatabaseUrl
-            user = jdbcDatabaseUser
-            password = jdbcDatabasePassword
-            schemas = arrayOf("public")
-            ignoreMigrationPatterns = arrayOf("*:pending")
-        }
-    }
-}
-
-buildscript {
-    dependencies {
-        classpath("io.github.cdimascio:dotenv-kotlin:6.3.1")
-    }
 }
 
 repositories {
@@ -108,8 +83,8 @@ dependencies {
     implementation(platform("software.amazon.awssdk:bom:$aws_sdk_java_version"))
     implementation("software.amazon.awssdk:s3")
 
-    // Dotenv (Loading environment variables)
-    implementation("io.github.cdimascio:dotenv-kotlin:$dotenv_version")
+    // Flyway to enable Java API for database migration
+    implementation("org.flywaydb:flyway-core:$flyway_version")
 
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")

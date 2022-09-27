@@ -1,19 +1,16 @@
 package com.patrickpie12345
 
-import io.github.cdimascio.dotenv.dotenv
-
 object Env {
 
-    private val env = dotenv()
+    val region: String = System.getenv("AWS_REGION") ?: ""
+    val bucketName: String = System.getenv("AWS_BUCKET_NAME") ?: ""
+    val accessKeyId: String = System.getenv("AWS_ACCESS_KEY_ID") ?: ""
+    val secretAccessKey: String = System.getenv("AWS_SECRET_ACCESS_KEY") ?: ""
 
-    val region: String = env["AWS_REGION"]
-    val bucketName: String = env["AWS_BUCKET_NAME"]
-    val accessKeyId: String = env["AWS_ACCESS_KEY_ID"]
-    val secretAccessKey: String = env["AWS_SECRET_ACCESS_KEY"]
-
-    val serverPort: Int = env["SERVER_PORT"].toInt()
-    val databasePort: Int = env["DATABASE_PORT"].toInt()
-    val databaseHost: String = env["DATABASE_HOST"]
-    val databaseUserName: String = env["DATABASE_USERNAME"]
-    val databasePassword: String = env["DATABASE_PASSWORD"]
+    val serverPort: Int = System.getenv("SERVER_PORT")?.toInt() ?: 8080
+    val databasePort: Int = System.getenv("DATABASE_PORT")?.toInt() ?: 5432
+    val databaseHost: String = System.getenv("DATABASE_HOST") ?: "localhost"
+    val databaseUserName: String = System.getenv("DATABASE_USERNAME") ?: "postgres"
+    val databasePassword: String = System.getenv("DATABASE_PASSWORD") ?: "postgres"
+    val jdbcDatabaseUrl: String = System.getenv("JDBC_DATABASE_URL") ?: "jdbc:postgresql://localhost:5432/financeTrackr"
 }

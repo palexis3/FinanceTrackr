@@ -21,7 +21,7 @@ class StoresStorageVertx(private val client: SqlClient) : StoresStorage {
             client = client,
             query = """
                 WITH new_row AS (
-                    INSERT INTO public.stores (name, category)
+                    INSERT INTO public.stores (name, store_category)
                         SELECT $1, $2
                             WHERE NOT EXISTS (SELECT 1 FROM public.stores WHERE name = $1 AND store_category = $2)
                     RETURNING *
