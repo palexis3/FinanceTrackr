@@ -21,11 +21,11 @@ object DI {
     fun storageModule() = module {
         single {
             PgConnectOptions().apply {
-                port = Env.databasePort
-                host = Env.databaseHost
-                database = "financeTrackr"
-                user = Env.databaseUserName
-                password = Env.databasePassword
+                port = System.getenv("DATABASE_PORT").toInt()
+                host = System.getenv("DATABASE_HOST")
+                database = System.getenv("DATABASE_NAME")
+                user = System.getenv("DATABASE_USERNAME")
+                password = System.getenv("DATABASE_PASSWORD")
             }
         }
 
