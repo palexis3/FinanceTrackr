@@ -14,6 +14,7 @@ val flyway_version: String by project
 plugins {
     application
     kotlin("jvm") version "1.7.10"
+    id("org.flywaydb.flyway") version "9.0.2"
     id("org.jlleitschuh.gradle.ktlint") version "10.1.0"
     id("com.expediagroup.graphql") version "6.1.0"
     id("io.ktor.plugin") version "2.1.1"
@@ -28,6 +29,18 @@ application {
 
     val isDevelopment: Boolean = project.ext.has("development")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
+}
+
+kotlin {
+    tasks {
+        flyway {
+            url = System.getenv("JDBC_DATABASE_URL")
+            user = System.getenv("DATABASE_USERNAME")
+            password = System.getenv("DATABASE_PASSWORD")
+            schemas = arrayOf("public")
+            ignoreMigrationPatterns = arrayOf("*:pending")
+        }
+    }
 }
 
 repositories {
@@ -82,9 +95,6 @@ dependencies {
     // AWS SDK - Java
     implementation(platform("software.amazon.awssdk:bom:$aws_sdk_java_version"))
     implementation("software.amazon.awssdk:s3")
-
-    // Flyway to enable Java API for database migration
-    implementation("org.flywaydb:flyway-core:$flyway_version")
 
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")

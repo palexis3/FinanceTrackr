@@ -9,8 +9,7 @@ object Env {
 
     val serverPort: Int = System.getenv("SERVER_PORT")?.toInt() ?: 8080
     val databasePort: Int = System.getenv("DATABASE_PORT")?.toInt() ?: 5432
-    val databaseHost: String = System.getenv("DATABASE_HOST") ?: "localhost"
-    val databaseUserName: String = System.getenv("DATABASE_USERNAME") ?: "postgres"
-    val databasePassword: String = System.getenv("DATABASE_PASSWORD") ?: "postgres"
-    val jdbcDatabaseUrl: String = System.getenv("JDBC_DATABASE_URL") ?: "jdbc:postgresql://localhost:5432/financeTrackr"
+    val databaseHost: String = System.getenv("DATABASE_HOST")
+    val databaseUserName: String = System.getenv("DATABASE_USERNAME")
+    val databasePassword: String = System.getenv("DATABASE_PASSWORD")
 }

@@ -1,17 +1,6 @@
 services:
   web:
     build: .
-    environment:
-      AWS_BUCKET_NAME: "${AWS_BUCKET_NAME}"
-      AWS_REGION: "${AWS_REGION}"
-      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
-      AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
-      SERVER_PORT: "${SERVER_PORT}"
-      JDBC_DATABASE_URL: "${JDBC_DATABASE_URL}"
-      DATABASE_USERNAME: "${DATABASE_USERNAME}"
-      DATABASE_PASSWORD: "${DATABASE_PASSWORD}"
-      DATABASE_HOST: "${DATABASE_HOST}"
-      DATABASE_PORT: "${DATABASE_PORT}"
     ports:
       - "8080:8080"
     volumes:
@@ -25,11 +14,6 @@ services:
     image: postgres
     volumes:
       - ./tmp/db:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: financeTrackr
-      POSTGRES_HOST: "${DATABASE_HOST}"
-      POSTGRES_USER: "${DATABASE_USERNAME}"
-      POSTGRES_PASSWORD: "${DATABASE_PASSWORD}"
     env_file:
       - .env.prod
     ports:
