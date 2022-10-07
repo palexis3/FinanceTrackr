@@ -39,7 +39,7 @@ fun Route.receiptRouting(
             call.respond(receipt)
         }
 
-        post {
+        post("/create") {
             val receiptCreate = call.receive<ReceiptCreate>()
             call.application.environment.log.debug("$receiptCreate")
 

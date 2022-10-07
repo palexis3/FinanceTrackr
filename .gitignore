@@ -36,4 +36,4 @@ out/
 .vscode/
 
 tmp/
-.env
+.env.prod

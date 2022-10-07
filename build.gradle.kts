@@ -9,14 +9,15 @@ val jackson_version: String by project
 val scram_version: String by project
 val aws_sdk_java_version: String by project
 val dotenv_version: String by project
+val flyway_version: String by project
 
 plugins {
     application
     kotlin("jvm") version "1.7.10"
-    id("com.github.johnrengelman.shadow") version "7.1.2"
     id("org.flywaydb.flyway") version "9.0.2"
     id("org.jlleitschuh.gradle.ktlint") version "10.1.0"
     id("com.expediagroup.graphql") version "6.1.0"
+    id("io.ktor.plugin") version "2.1.1"
 }
 
 val entryPoint = "com.patrickpie12345.ApplicationKt"
@@ -33,31 +34,14 @@ application {
 kotlin {
     tasks {
         flyway {
-            url = "jdbc:postgresql://localhost:5432/financeTrackr"
-            user = "postgres"
-            password = "postgres"
+            url = System.getenv("JDBC_DATABASE_URL")
+            user = System.getenv("DATABASE_USERNAME")
+            password = System.getenv("DATABASE_PASSWORD")
             schemas = arrayOf("public")
             ignoreMigrationPatterns = arrayOf("*:pending")
         }
-
-        shadowJar {
-            manifest {
-                attributes(
-                    "Main-Class" to entryPoint
-                )
-            }
-        }
     }
 }
-
-// tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-//    kotlinOptions {
-//        allWarningsAsErrors = true
-//        apiVersion = "1.5"
-//        languageVersion = "1.5"
-//        jvmTarget = "11"
-//    }
-// }
 
 repositories {
     mavenCentral()
@@ -111,9 +95,6 @@ dependencies {
     // AWS SDK - Java
     implementation(platform("software.amazon.awssdk:bom:$aws_sdk_java_version"))
     implementation("software.amazon.awssdk:s3")
-
-    // Dotenv (Loading environment variables)
-    implementation("io.github.cdimascio:dotenv-kotlin:$dotenv_version")
 
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
