@@ -18,7 +18,7 @@ fun main() {
         flyway.repair()
     }
 
-    embeddedServer(Netty, port = Env.serverPort) {
+    embeddedServer(Netty, port = System.getenv("SERVER_PORT").toInt()) {
         configureSerialization()
         configureMonitoring()
         configureDependencyInjection()
