@@ -6,11 +6,16 @@ import ProductStoreSum
 import ProductStoresDBAnalyticsRequest
 import com.patrickpie12345.helper.NumberConverter
 import com.patrickpie12345.models.Page
-import com.patrickpie12345.models.product.*
+import com.patrickpie12345.models.product.Product
+import com.patrickpie12345.models.product.ProductDBCreate
+import com.patrickpie12345.models.product.ProductToStoreDBCreate
+import com.patrickpie12345.models.product.ProductToStoreDBUpdate
+import com.patrickpie12345.models.product.ProductUpdate
 import com.patrickpie12345.storage.UpsertResult
+import com.patrickpie12345.storage.images.ItemImageStorage
 import io.vertx.sqlclient.Row
 import java.time.ZoneOffset
-import java.util.*
+import java.util.UUID
 
 fun Row.toProduct() = Product(
     id = this.getUUID("id"),
@@ -21,7 +26,7 @@ fun Row.toProduct() = Product(
     productCategory = this.getString("product_category"),
 )
 
-interface ProductStorage {
+interface ProductStorage : ItemImageStorage {
     suspend fun get(id: UUID): Product?
     suspend fun getByCategory(productCategory: String): Page<Product>
     suspend fun getByStore(storeId: UUID): Page<Product>

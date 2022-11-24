@@ -1,8 +1,8 @@
 package com.patrickpie12345.service
 
-import com.patrickpie12345.service.aws.AwsImageUploadService
+import com.patrickpie12345.service.aws.AwsUploadService
 import com.patrickpie12345.storage.UpsertResult
-import com.patrickpie12345.storage.images.ImagesTablesStorageVertx
+import com.patrickpie12345.storage.images.ImagesTablesStorage
 import com.patrickpie12345.storage.images.ItemImageStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -13,8 +13,8 @@ import java.util.*
 
 abstract class ItemService(private val itemImageStorage: ItemImageStorage) : KoinComponent {
 
-    private val awsUploadService: AwsImageUploadService by inject()
-    private val imagesTableStorage: ImagesTablesStorageVertx by inject()
+    private val awsUploadService: AwsUploadService by inject()
+    private val imagesTableStorage: ImagesTablesStorage by inject()
 
     suspend fun addImage(itemId: String, image: File): UpsertResult<String> =
         withContext(Dispatchers.IO) {

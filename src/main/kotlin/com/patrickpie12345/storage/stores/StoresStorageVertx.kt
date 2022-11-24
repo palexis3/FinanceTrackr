@@ -6,7 +6,7 @@ import com.patrickpie12345.storage.UpsertResult
 import com.patrickpie12345.storage.VertxStorageExtension.fetchRow
 import io.vertx.sqlclient.SqlClient
 import io.vertx.sqlclient.Tuple
-import java.util.*
+import java.util.UUID
 
 class StoresStorageVertx(private val client: SqlClient) : StoresStorage {
 

@@ -5,7 +5,7 @@ import com.patrickpie12345.models.store.StoreCategory
 import com.patrickpie12345.models.store.StoreCreate
 import com.patrickpie12345.storage.UpsertResult
 import io.vertx.sqlclient.Row
-import java.util.*
+import java.util.UUID
 
 fun Row.toStore() = Store(
     id = this.getUUID("id"),

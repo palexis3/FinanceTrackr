@@ -5,15 +5,15 @@ import com.patrickpie12345.models.receipt.Receipt
 import com.patrickpie12345.models.receipt.ReceiptCreate
 import com.patrickpie12345.models.receipt.ReceiptDBCreate
 import com.patrickpie12345.storage.UpsertResult
-import com.patrickpie12345.storage.receipts.ReceiptStorageVertx
-import com.patrickpie12345.storage.stores.StoresStorageVertx
+import com.patrickpie12345.storage.receipts.ReceiptStorage
+import com.patrickpie12345.storage.stores.StoresStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.UUID
 
 class ReceiptService(
-    private val receiptStorage: ReceiptStorageVertx,
-    private val storesStorage: StoresStorageVertx
+    private val receiptStorage: ReceiptStorage,
+    private val storesStorage: StoresStorage
 ) : ItemService(receiptStorage) {
 
     suspend fun getAll(): Page<Receipt>? = withContext(Dispatchers.IO) {

@@ -5,17 +5,23 @@ import com.patrickpie12345.helper.OffsetDateRange
 import com.patrickpie12345.helper.TimeDateConverter
 import com.patrickpie12345.helper.TimeToSearch
 import com.patrickpie12345.models.Page
-import com.patrickpie12345.models.product.*
+import com.patrickpie12345.models.product.Product
+import com.patrickpie12345.models.product.ProductCreate
+import com.patrickpie12345.models.product.ProductDBCreate
+import com.patrickpie12345.models.product.ProductToStoreDBCreate
+import com.patrickpie12345.models.product.ProductToStoreDBUpdate
+import com.patrickpie12345.models.product.ProductUpdate
 import com.patrickpie12345.models.store.StoreCreate
 import com.patrickpie12345.storage.UpsertResult
-import com.patrickpie12345.storage.products.ProductStorageVertx
-import com.patrickpie12345.storage.stores.StoresStorageVertx
-import kotlinx.coroutines.*
-import java.util.*
+import com.patrickpie12345.storage.products.ProductStorage
+import com.patrickpie12345.storage.stores.StoresStorage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.util.UUID
 
 class ProductService(
-    private val productStorage: ProductStorageVertx,
-    private val storesStorage: StoresStorageVertx
+    private val productStorage: ProductStorage,
+    private val storesStorage: StoresStorage
 ) : ItemService(productStorage) {
 
     suspend fun get(id: String): Product? =

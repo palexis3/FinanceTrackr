@@ -1,14 +1,14 @@
 package com.patrickpie12345.service.analytics
 
 import com.patrickpie12345.helper.TimeDateConverter
-import com.patrickpie12345.models.receipt.*
-import com.patrickpie12345.storage.receipts.ReceiptStorageVertx
+import com.patrickpie12345.models.receipt.ReceiptAnalyticsCategoryDBRequest
+import com.patrickpie12345.models.receipt.ReceiptAnalyticsCategoryResponse
+import com.patrickpie12345.models.receipt.ReceiptAnalyticsRequest
+import com.patrickpie12345.storage.receipts.ReceiptStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class ReceiptAnalyticsService(
-    private val receiptStorage: ReceiptStorageVertx
-) {
+class ReceiptAnalyticsService(private val receiptStorage: ReceiptStorage) {
 
     suspend fun getCategorySum(request: ReceiptAnalyticsRequest): ReceiptAnalyticsCategoryResponse =
         withContext(Dispatchers.IO) {
@@ -24,6 +24,10 @@ class ReceiptAnalyticsService(
                 offsetDateRange.startOffsetDate,
                 offsetDateRange.endOffsetDate
             )
-            ReceiptAnalyticsCategoryResponse(readableDateRange.startDate, readableDateRange.endDate, storeCategorySum.items)
+            ReceiptAnalyticsCategoryResponse(
+                readableDateRange.startDate,
+                readableDateRange.endDate,
+                storeCategorySum.items
+            )
         }
 }

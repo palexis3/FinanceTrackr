@@ -5,16 +5,19 @@ import ProductCategorySum
 import ProductStoreSum
 import ProductStoresDBAnalyticsRequest
 import com.patrickpie12345.models.Page
-import com.patrickpie12345.models.product.*
+import com.patrickpie12345.models.product.Product
+import com.patrickpie12345.models.product.ProductDBCreate
+import com.patrickpie12345.models.product.ProductToStoreDBCreate
+import com.patrickpie12345.models.product.ProductToStoreDBUpdate
+import com.patrickpie12345.models.product.ProductUpdate
 import com.patrickpie12345.storage.UpsertResult
 import com.patrickpie12345.storage.VertxStorageExtension.fetchRow
 import com.patrickpie12345.storage.VertxStorageExtension.fetchRowSet
-import com.patrickpie12345.storage.images.ItemImageStorage
 import io.vertx.sqlclient.SqlClient
 import io.vertx.sqlclient.Tuple
-import java.util.*
+import java.util.UUID
 
-class ProductStorageVertx(private val client: SqlClient) : ProductStorage, ItemImageStorage {
+class ProductStorageVertx(private val client: SqlClient) : ProductStorage {
 
     override suspend fun get(id: UUID): Product? =
         fetchRow(
