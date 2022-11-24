@@ -10,14 +10,14 @@ import ProductStoresDBAnalyticsRequest
 import StoreAndProducts
 import com.patrickpie12345.helper.NumberConverter
 import com.patrickpie12345.helper.TimeDateConverter
-import com.patrickpie12345.storage.products.ProductStorageVertx
-import com.patrickpie12345.storage.stores.StoresStorageVertx
+import com.patrickpie12345.storage.products.ProductStorage
+import com.patrickpie12345.storage.stores.StoresStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class ProductsAnalyticsService(
-    private val productStorage: ProductStorageVertx,
-    private val storeStorage: StoresStorageVertx
+    private val productStorage: ProductStorage,
+    private val storeStorage: StoresStorage
 ) {
 
     suspend fun getCategorySum(analyticsRequest: ProductCategoryAnalyticsRequest): ProductCategoryAnalyticsResponse =

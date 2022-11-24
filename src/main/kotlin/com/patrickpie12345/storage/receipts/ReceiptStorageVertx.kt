@@ -2,17 +2,19 @@ package com.patrickpie12345.storage.receipts
 
 import com.patrickpie12345.helper.NumberConverter
 import com.patrickpie12345.models.Page
-import com.patrickpie12345.models.receipt.*
+import com.patrickpie12345.models.receipt.Receipt
+import com.patrickpie12345.models.receipt.ReceiptAnalyticsCategoryDBRequest
+import com.patrickpie12345.models.receipt.ReceiptDBCreate
+import com.patrickpie12345.models.receipt.StoreCategorySum
 import com.patrickpie12345.models.store.StoreCategory
 import com.patrickpie12345.storage.UpsertResult
 import com.patrickpie12345.storage.VertxStorageExtension.fetchRow
 import com.patrickpie12345.storage.VertxStorageExtension.fetchRowSet
-import com.patrickpie12345.storage.images.ItemImageStorage
 import io.vertx.sqlclient.SqlClient
 import io.vertx.sqlclient.Tuple
 import java.util.UUID
 
-class ReceiptStorageVertx(private val client: SqlClient) : ReceiptStorage, ItemImageStorage {
+class ReceiptStorageVertx(private val client: SqlClient) : ReceiptStorage {
 
     override suspend fun get(id: UUID): Receipt? =
         fetchRow(

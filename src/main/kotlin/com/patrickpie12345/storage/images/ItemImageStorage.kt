@@ -1,7 +1,7 @@
 package com.patrickpie12345.storage.images
 
 import com.patrickpie12345.storage.UpsertResult
-import java.util.*
+import java.util.UUID
 
 /**
  * `ItemImageStorage` is different from `ImagesTablesStorage` where the latter is used to store
