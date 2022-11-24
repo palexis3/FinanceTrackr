@@ -12,13 +12,21 @@ fun main() {
         System.getenv("DATABASE_PASSWORD")
     ).schemas("public").ignoreMigrationPatterns("*:pending").load()
 
+    //  Uncomment for testing since can't get environment variables
+//    val flyway: Flyway = Flyway.configure().dataSource(
+//        "jdbc:postgresql://localhost:5432/financeTrackr",
+//        "postgres",
+//        "postgres"
+//    ).schemas("public").ignoreMigrationPatterns("*:pending").load()
+
     try {
         flyway.migrate()
     } catch (e: Exception) {
         flyway.repair()
     }
 
-    embeddedServer(Netty, port = System.getenv("SERVER_PORT").toInt()) {
+    // System.getenv("SERVER_PORT").toInt()
+    embeddedServer(Netty, port = 8080) {
         configureSerialization()
         configureMonitoring()
         configureDependencyInjection()
