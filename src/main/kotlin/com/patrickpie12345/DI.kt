@@ -32,6 +32,15 @@ object DI {
                 user = System.getenv("DATABASE_USERNAME")
                 password = System.getenv("DATABASE_PASSWORD")
             }
+
+            //  Uncomment for testing since can't get environment variables
+//            PgConnectOptions().apply  {
+//                user="postgres"
+//                password="postgres"
+//                database="financeTrackr"
+//                host="localhost"
+//                port=5432
+//            }
         }
 
         single<PoolOptions> { PoolOptions().setMaxSize(5) }

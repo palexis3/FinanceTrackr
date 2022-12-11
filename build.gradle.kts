@@ -10,6 +10,7 @@ val scram_version: String by project
 val aws_sdk_java_version: String by project
 val dotenv_version: String by project
 val flyway_version: String by project
+val quartz_scheduler_version: String by project
 
 plugins {
     application
@@ -85,6 +86,9 @@ dependencies {
 
     // Flyway to enable Java API for database migration
     implementation("org.flywaydb:flyway-core:$flyway_version")
+
+    // Quartz Schedule
+    implementation("io.quarkus:quarkus-scheduler:$quartz_scheduler_version")
 
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")

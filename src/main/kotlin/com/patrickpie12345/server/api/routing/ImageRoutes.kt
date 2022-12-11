@@ -4,12 +4,15 @@ import com.patrickpie12345.extensions.toFile
 import com.patrickpie12345.service.ProductService
 import com.patrickpie12345.service.ReceiptService
 import com.patrickpie12345.storage.UpsertResult
-import io.ktor.http.*
-import io.ktor.http.content.*
-import io.ktor.server.application.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.content.PartData
+import io.ktor.http.content.forEachPart
+import io.ktor.server.application.call
+import io.ktor.server.request.receiveMultipart
+import io.ktor.server.response.respond
+import io.ktor.server.response.respondText
+import io.ktor.server.routing.Route
+import io.ktor.server.routing.post
 import java.io.File
 
 fun Route.imageRouting(
