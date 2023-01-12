@@ -86,6 +86,9 @@ dependencies {
     // Flyway to enable Java API for database migration
     implementation("org.flywaydb:flyway-core:$flyway_version")
 
+    // Quartz Schedule
+    // implementation("io.quarkus:quarkus-scheduler:$quartz_scheduler_version")
+
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 }

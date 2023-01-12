@@ -42,13 +42,18 @@ fun Route.imageRouting(
                 partData.dispose
             }
 
+            call.application.environment.log.debug("ImageRoutes file: $image")
+
             image?.let { file ->
-                when (itemService.addImage(id, file)) {
+                val upsertResult = itemService.addImage(id, file)
+                call.application.environment.log.debug("ImageRoutes upsertResult: $upsertResult")
+                when (upsertResult) {
                     is UpsertResult.Ok -> call.respond(HttpStatusCode.Created)
                     else -> call.respondText("Internal error: could not save image in database", status = HttpStatusCode.InternalServerError)
                 }
             } ?: call.respondText("Internal error: image processed was null", status = HttpStatusCode.InternalServerError)
         } catch (ex: Exception) {
+            call.application.environment.log.debug("ImageRoutes exception: $ex")
             call.respondText(
                 "Exception occurred while processing image",
                 status = HttpStatusCode.InternalServerError
