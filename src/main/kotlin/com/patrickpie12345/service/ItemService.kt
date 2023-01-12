@@ -9,7 +9,7 @@ import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.io.File
-import java.util.*
+import java.util.UUID
 
 abstract class ItemService(private val itemImageStorage: ItemImageStorage) : KoinComponent {
 
