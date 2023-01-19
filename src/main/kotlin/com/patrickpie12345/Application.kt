@@ -20,7 +20,7 @@ fun main() {
 
     embeddedServer(Netty, port = System.getenv("SERVER_PORT").toInt()) {
         configureSerialization()
-//        configureMonitoring()
+        configureMonitoring()
         configureDependencyInjection()
         configureRouting()
     }.start(wait = true)
