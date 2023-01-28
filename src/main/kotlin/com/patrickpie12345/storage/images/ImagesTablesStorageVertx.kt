@@ -21,4 +21,13 @@ class ImagesTablesStorageVertx(private val client: SqlClient) : ImagesTablesStor
                 else -> UpsertResult.Ok(row.getUUID("id"))
             }
         }
+
+    override suspend fun getImageUrl(imageId: UUID): String? =
+        fetchRow(
+                client = client,
+                query = """
+                    SELECT * FROM public.images WHERE id = $1
+                """.trimIndent(),
+                args = Tuple.of(imageId)
+            )?.getString("aws_s3_url")
 }

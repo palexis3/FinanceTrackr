@@ -13,7 +13,9 @@ data class Receipt(
     val imageId: UUID? = null,
     val storeId: UUID,
     val createdAt: Instant
-)
+) {
+    var imageUrl: String? = null
+}
 
 @GraphQLDescription("Receipt data object to create one")
 data class ReceiptCreate(

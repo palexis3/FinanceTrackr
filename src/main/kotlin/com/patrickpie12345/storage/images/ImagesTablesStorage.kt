@@ -5,4 +5,5 @@ import java.util.UUID
 
 interface ImagesTablesStorage {
     suspend fun addImage(awsS3Url: String): UpsertResult<UUID>
+    suspend fun getImageUrl(imageId: UUID): String?
 }

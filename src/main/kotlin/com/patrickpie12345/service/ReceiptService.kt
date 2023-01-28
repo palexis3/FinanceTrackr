@@ -5,6 +5,7 @@ import com.patrickpie12345.models.receipt.Receipt
 import com.patrickpie12345.models.receipt.ReceiptCreate
 import com.patrickpie12345.models.receipt.ReceiptDBCreate
 import com.patrickpie12345.storage.UpsertResult
+import com.patrickpie12345.storage.images.ImagesTablesStorage
 import com.patrickpie12345.storage.receipts.ReceiptStorage
 import com.patrickpie12345.storage.stores.StoresStorage
 import kotlinx.coroutines.Dispatchers
@@ -13,7 +14,8 @@ import java.util.UUID
 
 class ReceiptService(
     private val receiptStorage: ReceiptStorage,
-    private val storesStorage: StoresStorage
+    private val storesStorage: StoresStorage,
+    private val imagesTablesStorage: ImagesTablesStorage
 ) : ItemService(receiptStorage) {
 
     suspend fun getAll(): Page<Receipt>? = withContext(Dispatchers.IO) {
@@ -28,7 +30,12 @@ class ReceiptService(
     suspend fun get(id: String): Receipt? = withContext(Dispatchers.IO) {
         when (val receipt = receiptStorage.get(UUID.fromString(id))) {
             null -> null
-            else -> receipt
+            else -> {
+                val imageId = receipt.imageId
+                val imageUrl = imageId?.let { imagesTablesStorage.getImageUrl(imageId) } ?: ""
+                receipt.imageUrl = imageUrl
+                receipt
+            }
         }
     }
 
