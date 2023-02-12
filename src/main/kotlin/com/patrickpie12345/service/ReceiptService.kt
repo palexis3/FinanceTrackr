@@ -14,8 +14,7 @@ import java.util.UUID
 
 class ReceiptService(
     private val receiptStorage: ReceiptStorage,
-    private val storesStorage: StoresStorage,
-    private val imagesTablesStorage: ImagesTablesStorage
+    private val storesStorage: StoresStorage
 ) : ItemService(receiptStorage) {
 
     suspend fun getAll(): Page<Receipt>? = withContext(Dispatchers.IO) {
@@ -31,9 +30,9 @@ class ReceiptService(
         when (val receipt = receiptStorage.get(UUID.fromString(id))) {
             null -> null
             else -> {
-                val imageId = receipt.imageId
-                val imageUrl = imageId?.let { imagesTablesStorage.getImageUrl(imageId) } ?: ""
-                receipt.imageUrl = imageUrl
+//                val imageId = receipt.imageId
+//                val imageUrl = imageId?.let { imagesTablesStorage.getImageUrl(imageId) } ?: ""
+//                receipt.imageUrl = imageUrl
                 receipt
             }
         }

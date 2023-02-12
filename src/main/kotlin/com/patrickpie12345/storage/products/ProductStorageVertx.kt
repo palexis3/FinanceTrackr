@@ -22,7 +22,10 @@ class ProductStorageVertx(private val client: SqlClient) : ProductStorage {
     override suspend fun get(id: UUID): Product? =
         fetchRow(
             client = client,
-            query = "SELECT * FROM public.products WHERE id = $1",
+            query = """
+                SELECT products.*, images.aws_s3_url FROM public.products AS pro LEFT JOIN public.images AS ima
+                WHERE pro.id = $1 AND pro.image_id = ima.id
+            """.trimIndent(),
             args = Tuple.of(id)
         )?.toProduct()
 
@@ -57,7 +60,10 @@ class ProductStorageVertx(private val client: SqlClient) : ProductStorage {
     override suspend fun getAll(): Page<Product>? =
         fetchRowSet(
             client = client,
-            query = "SELECT * FROM public.products",
+            query = """
+                SELECT products.*, images.aws_s3_url FROM public.products AS pro LEFT JOIN public.images AS ima
+                WHERE pro.image_id = ima.id
+            """.trimIndent(),
             args = Tuple.tuple()
         )?.let { rows ->
             val total = rows.size()

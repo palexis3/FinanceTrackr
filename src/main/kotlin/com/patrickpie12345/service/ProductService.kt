@@ -22,8 +22,7 @@ import java.util.UUID
 
 class ProductService(
     private val productStorage: ProductStorage,
-    private val storesStorage: StoresStorage,
-    private val imagesTablesStorage: ImagesTablesStorage
+    private val storesStorage: StoresStorage
 ) : ItemService(productStorage) {
 
     suspend fun get(id: String): Product? =
@@ -31,9 +30,9 @@ class ProductService(
             when (val product = productStorage.get(UUID.fromString(id))) {
                 null -> null
                 else -> {
-                    val imageId = product.imageId
-                    val imageUrl = imageId?.let { imagesTablesStorage.getImageUrl(imageId) } ?: ""
-                    product.imageUrl = imageUrl
+//                    val imageId = product.imageId
+//                    val imageUrl = imageId?.let { imagesTablesStorage.getImageUrl(imageId) } ?: ""
+//                    product.imageUrl = imageUrl
                     product
                 }
             }

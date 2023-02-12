@@ -21,10 +21,11 @@ fun Row.toProduct() = Product(
     id = this.getUUID("id"),
     name = this.getString("name"),
     price = NumberConverter.floatToDollarConversion(this.getFloat("price")),
-    imageId = this.getUUID("image_id"),
     createdAt = this.getLocalDateTime("created_at").toInstant(ZoneOffset.UTC),
     productCategory = this.getString("product_category"),
-)
+).also {
+    it.imageUrl = this.getString("aws_s3_url")
+}
 
 interface ProductStorage : ItemImageStorage {
     suspend fun get(id: UUID): Product?
