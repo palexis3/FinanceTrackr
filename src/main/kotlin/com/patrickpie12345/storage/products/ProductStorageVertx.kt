@@ -23,7 +23,7 @@ class ProductStorageVertx(private val client: SqlClient) : ProductStorage {
         fetchRow(
             client = client,
             query = """
-                SELECT products.*, images.aws_s3_url FROM public.products AS pro LEFT JOIN public.images AS ima
+                SELECT pro.*, ima.aws_s3_url FROM public.products AS pro LEFT JOIN public.images AS ima
                 ON pro.id = $1 AND pro.image_id = ima.id
             """.trimIndent(),
             args = Tuple.of(id)
@@ -61,7 +61,7 @@ class ProductStorageVertx(private val client: SqlClient) : ProductStorage {
         fetchRowSet(
             client = client,
             query = """
-                SELECT products.*, images.aws_s3_url FROM public.products AS pro LEFT JOIN public.images AS ima
+                SELECT pro.*, ima.aws_s3_url FROM public.products AS pro LEFT JOIN public.images AS ima
                 ON pro.image_id = ima.id
             """.trimIndent(),
             args = Tuple.tuple()
