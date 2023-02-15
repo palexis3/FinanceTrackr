@@ -47,10 +47,11 @@ data class Product(
     val id: UUID,
     val name: String,
     val price: String,
-    val imageId: UUID? = null,
     val createdAt: Instant,
     val productCategory: String
-)
+) {
+    var imageUrl: String? = null
+}
 
 @GraphQLDescription("Product object needed to create one")
 data class ProductCreate(

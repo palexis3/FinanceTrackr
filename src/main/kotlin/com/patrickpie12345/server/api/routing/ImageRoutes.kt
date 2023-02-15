@@ -54,7 +54,7 @@ fun Route.imageRouting(
             } ?: call.respondText("Internal error: image processed was null", status = HttpStatusCode.InternalServerError)
         } catch (ex: Exception) {
             call.application.environment.log.debug("ImageRoutes exception: $ex")
-            for(exceptionElement in ex.stackTrace) {
+            for (exceptionElement in ex.stackTrace) {
                 call.application.environment.log.debug("$exceptionElement")
             }
             call.respondText(
