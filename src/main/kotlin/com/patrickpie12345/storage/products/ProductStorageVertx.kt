@@ -24,7 +24,8 @@ class ProductStorageVertx(private val client: SqlClient) : ProductStorage {
             client = client,
             query = """
                 SELECT pro.*, ima.aws_s3_url FROM public.products AS pro LEFT JOIN public.images AS ima
-                ON pro.id = $1 AND pro.image_id = ima.id
+                ON pro.image_id = ima.id
+                WHERE pro.id = $1
             """.trimIndent(),
             args = Tuple.of(id)
         )?.toProduct()
