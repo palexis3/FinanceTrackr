@@ -15,10 +15,11 @@ fun Row.toReceipt() = Receipt(
     id = this.getUUID("id"),
     title = this.getString("title"),
     price = this.getFloat("price"),
-    imageId = this.getUUID("image_id"),
     storeId = this.getUUID("store_id"),
     createdAt = this.getLocalDateTime("created_at").toInstant(ZoneOffset.UTC)
-)
+).also {
+    it.imageUrl = this.getString("aws_s3_url")
+}
 
 interface ReceiptStorage : ItemImageStorage {
     suspend fun get(id: UUID): Receipt?

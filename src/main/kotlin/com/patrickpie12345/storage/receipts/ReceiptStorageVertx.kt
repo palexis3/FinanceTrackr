@@ -19,14 +19,21 @@ class ReceiptStorageVertx(private val client: SqlClient) : ReceiptStorage {
     override suspend fun get(id: UUID): Receipt? =
         fetchRow(
             client = client,
-            query = "SELECT * FROM public.receipts WHERE id = $1",
+            query = """
+                SELECT rec.*, ima.aws_s3_url FROM public.receipts AS rec LEFT JOIN public.images AS ima
+                ON pro.image_id = ima.id
+                WHERE rec.id = $1
+            """.trimIndent(),
             args = Tuple.of(id)
         )?.toReceipt()
 
     override suspend fun getAll(): Page<Receipt>? =
         fetchRowSet(
             client = client,
-            query = "SELECT * FROM public.receipts",
+            query = """
+                 SELECT rec.*, ima.aws_s3_url FROM public.receipts AS rec LEFT JOIN public.images AS ima
+                 ON rec.image_id = ima.id
+            """.trimIndent(),
             args = Tuple.tuple()
         )?.let { rows ->
             val total = rows.size()

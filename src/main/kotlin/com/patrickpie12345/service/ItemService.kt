@@ -27,11 +27,4 @@ abstract class ItemService(private val itemImageStorage: ItemImageStorage) : Koi
                 else -> UpsertResult.NotOk("Error inserting image onto our servers...")
             }
         }
-
-    suspend fun getImageUrl(imageId: UUID?): String? =
-        withContext(Dispatchers.IO) {
-            imageId?.let {
-                imagesTableStorage.getImageUrl(imageId)
-            }
-        }
 }

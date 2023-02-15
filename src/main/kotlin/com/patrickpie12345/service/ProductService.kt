@@ -13,7 +13,6 @@ import com.patrickpie12345.models.product.ProductToStoreDBUpdate
 import com.patrickpie12345.models.product.ProductUpdate
 import com.patrickpie12345.models.store.StoreCreate
 import com.patrickpie12345.storage.UpsertResult
-import com.patrickpie12345.storage.images.ImagesTablesStorage
 import com.patrickpie12345.storage.products.ProductStorage
 import com.patrickpie12345.storage.stores.StoresStorage
 import kotlinx.coroutines.Dispatchers
@@ -29,12 +28,7 @@ class ProductService(
         withContext(Dispatchers.IO) {
             when (val product = productStorage.get(UUID.fromString(id))) {
                 null -> null
-                else -> {
-//                    val imageId = product.imageId
-//                    val imageUrl = imageId?.let { imagesTablesStorage.getImageUrl(imageId) } ?: ""
-//                    product.imageUrl = imageUrl
-                    product
-                }
+                else -> product
             }
         }
 
